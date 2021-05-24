@@ -1,0 +1,33 @@
+{
+  "name": "cypress-harvester",
+  "version": "1.0.0",
+  "description": "Extracts repeating elements from the DOM onto a more friendly json format",
+  "main": "index.js",
+  "scripts": {
+    "prettier": "prettier --write --loglevel warn \"**/**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryanrosello-og/cypress-harvester.git"
+  },
+  "keywords": [
+    "cypress",
+    "web",
+    "scrape"
+  ],
+  "author": "Ryan Rosello",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ryanrosello-og/cypress-harvester/issues"
+  },
+  "homepage": "https://github.com/ryanrosello-og/cypress-harvester#readme",
+  "dependencies": {
+    "cypress": "^7.3.0",
+    "prettier": "^2.3.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "tabWidth": 2,
+    "semi": true
+  }
+}
