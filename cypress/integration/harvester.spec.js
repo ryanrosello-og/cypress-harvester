@@ -5,7 +5,22 @@ context('Harvester', () => {
     cy.visit('./cypress/fixtures/test_table.html');
   });
 
-  it('nah', () => {
+  it('using command', () => {
+    cy.get('#simpleTable')
+      .harvest({ rowIndexForHeadings: 0 })
+      .then((extractedTable) => {
+        cy.log(extractedTable);
+        expect(extractedTable.numberOfRecords).to.eq(3);
+        expect(extractedTable.columnHeadings).to.deep.eq([
+          'First Name',
+          'Last Name',
+          'Gender',
+          'Age',
+        ]);
+      });
+  });
+
+  xit('nah', () => {
     let rowIndexForHeadings = 0;
     cy.get('#simpleTable')
       .then(($e) => {

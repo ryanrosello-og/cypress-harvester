@@ -23,3 +23,51 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+Cypress.Commands.add(
+  'harvest',
+  {
+    prevSubject: true,
+  },
+  (subject, options) => {
+    let scrapped = [];
+    let columnHeadings = [];
+    var trows = subject[0].rows;
+    Cypress.$.each(trows, (rowIndex, row) => {
+      let o = new Object();
+
+      Cypress.$.each(row.cells, (cellIndex, cell) => {
+        if (rowIndex == options.rowIndexForHeadings) {
+          columnHeadings[cellIndex] = cell.textContent;
+        } else {
+          o[columnHeadings[cellIndex]] = cell.textContent;
+        }
+      });
+
+      if (rowIndex !== options.rowIndexForHeadings) {
+        scrapped.push(o);
+      }
+    });
+
+    const dataTable = {
+      data: scrapped,
+      columnHeadings: columnHeadings,
+      numberOfRecords: scrapped.length,
+    };
+
+    const value = subject[0].tagName.toLowerCase();
+    Cypress.log({
+      name: 'harvest',
+      message: value,
+      $el: subject,
+      consoleProps: () => {
+        return {
+          value,
+          options,
+          dataTable,
+        };
+      },
+    });
+
+    return dataTable;
+  }
+);
