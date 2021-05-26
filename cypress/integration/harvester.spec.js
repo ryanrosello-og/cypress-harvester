@@ -2,7 +2,7 @@
 
 context('Harvester', () => {
   beforeEach(() => {
-    cy.visit('./cypress/fixtures/test_table.html');
+    cy.visit('./cypress/fixtures/test_tables.html');
   });
 
   context('configuration [propertyNameConvention]', () => {
@@ -46,13 +46,61 @@ context('Harvester', () => {
     });
   });
 
-  it('determines the correct number of rows in the table', () => {});
+  it('determines the correct number of rows in the table', () => {
+    cy.get('#simpleTable')
+      .scrapeTable()
+      .then((extractedTable) => {
+        expect(extractedTable.numberOfRecords).to.eq(0);
+      });
+  });
 
-  it('retrieves the correct table cell values', () => {});
+  it('retrieves the correct table cell values', () => {
+    cy.get('#simpleTable')
+      .scrapeTable()
+      .then((extractedTable) => {
+        expect(extractedTable.data).to.deep.eq([]);
+      });
+  });
 
-  it('handles merged cells', () => {});
+  it('handles merged cells', () => {
+    cy.get('#mergedCells')
+      .scrapeTable()
+      .then((extractedTable) => {
+        expect(extractedTable.data).to.deep.eq([]);
+      });
+  });
 
-  it('appends numeric sequence for duplicate column names', () => {});
+  it('handles blank column name', () => {
+    cy.get('#blankColumnName')
+      .scrapeTable()
+      .then((extractedTable) => {
+        expect(extractedTable.data).to.deep.eq([]);
+      });
+  });
+
+  it('returns no record when a blank table is encountered', () => {
+    cy.get('#emptyTable')
+      .scrapeTable()
+      .then((extractedTable) => {
+        expect(extractedTable.data).to.deep.eq([]);
+      });
+  });
+
+  it('returns no records when a table only contains the header row', () => {
+    cy.get('#onlyHeaders')
+      .scrapeTable()
+      .then((extractedTable) => {
+        expect(extractedTable.data).to.deep.eq([]);
+      });
+  });
+
+  it('appends numeric sequence for duplicate column names', () => {
+    cy.get('#repeatedColumnNames')
+      .scrapeTable()
+      .then((extractedTable) => {
+        expect(extractedTable.data).to.deep.eq([]);
+      });
+  });
 
   it('show warning when locator return multiple tables', () => {
     cy.get('.duplicated-table')

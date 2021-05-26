@@ -39,10 +39,13 @@ Cypress.Commands.add(
       Cypress.$.each(row.cells, (cellIndex, cell) => {
         if (rowIndex == conf.rowIndexForHeadings) {
           // extract column headings
-          columnHeadings[cellIndex] = extractColumnName(
+          const columName = extractColumnName(
             cell.textContent,
             conf.propertyNameConvention
           );
+          columnHeadings[cellIndex] = columnHeadings.includes(columName)
+            ? `${columName}_${cellIndex}`
+            : columName;
         } else {
           o[columnHeadings[cellIndex]] = cell.textContent;
         }

@@ -4,7 +4,8 @@
   "description": "Extracts repeating elements from the DOM onto a more friendly json format",
   "main": "index.js",
   "scripts": {
-    "prettier": "prettier --write --loglevel warn \"**/**/*.js\""
+    "prettier": "prettier --write --loglevel warn \"**/**/*.js\"",
+    "cytest": "./node_modules/.bin/cypress open"
   },
   "repository": {
     "type": "git",
