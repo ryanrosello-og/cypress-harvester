@@ -3,17 +3,17 @@
 TODO :-
 
 [] merged cells
+[] custom column headings
+
 [] pair of repeating elements
-[] as chain command
-[] ? non-visible rows
-[] ? has <thead>
-[] ? has <tbody>
+✅ as chain command
+[] handle duplicate columns
+✅ handle duplicate webtables
 [] config:
-    - jsonify column headings
+    ✅ jsonify column headings
     - save to file
-    - custom column headings
     - exclude column headings
-    - remove new line char from heading
+    ✅ remove new line char from heading
     - infer integers
 
 Fix:

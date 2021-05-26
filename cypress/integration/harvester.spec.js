@@ -5,51 +5,62 @@ context('Harvester', () => {
     cy.visit('./cypress/fixtures/test_table.html');
   });
 
-  it('using command', () => {
-    cy.get('#simpleTable')
-      .harvest({ rowIndexForHeadings: 0 })
-      .then((extractedTable) => {
-        cy.log(extractedTable);
-        expect(extractedTable.numberOfRecords).to.eq(3);
-        expect(extractedTable.columnHeadings).to.deep.eq([
-          'First Name',
-          'Last Name',
-          'Gender',
-          'Age',
-        ]);
-      });
+  context('configuration [propertyNameConvention]', () => {
+    it('cleans column headings when propertyNameConvention is not provided', () => {
+      cy.get('#simpleTable')
+        .scrapeTable({ propertyNameConvention: '' })
+        .then((extractedTable) => {
+          expect(extractedTable.columnHeadings).to.deep.eq([
+            'First Name',
+            'Last Name',
+            'Gender',
+            'Age',
+          ]);
+        });
+    });
+
+    it('able to format column names as camel case', () => {
+      cy.get('#simpleTable')
+        .scrapeTable({ propertyNameConvention: 'camelCase' })
+        .then((extractedTable) => {
+          expect(extractedTable.columnHeadings).to.deep.eq([
+            'firstName',
+            'lastName',
+            'gender',
+            'age',
+          ]);
+        });
+    });
+
+    it('able to format column names as snake case', () => {
+      cy.get('#simpleTable')
+        .scrapeTable({ propertyNameConvention: 'snakeCase' })
+        .then((extractedTable) => {
+          expect(extractedTable.columnHeadings).to.deep.eq([
+            'first_name',
+            'last_name',
+            'gender',
+            'age',
+          ]);
+        });
+    });
   });
 
-  xit('nah', () => {
-    let rowIndexForHeadings = 0;
-    cy.get('#simpleTable')
-      .then(($e) => {
-        let scrapped = [];
-        let columnHeadings = [];
-        var trows = $e[0].rows;
-        Cypress.$.each(trows, (rowIndex, row) => {
-          let o = new Object();
+  it('determines the correct number of rows in the table', () => {});
 
-          Cypress.$.each(row.cells, (cellIndex, cell) => {
-            if (rowIndex == rowIndexForHeadings) {
-              columnHeadings[cellIndex] = cell.textContent;
-            } else {
-              o[columnHeadings[cellIndex]] = cell.textContent;
-            }
-          });
+  it('retrieves the correct table cell values', () => {});
 
-          if (rowIndex !== rowIndexForHeadings) {
-            scrapped.push(o);
-          }
-        });
-        return {
-          dataTable: scrapped,
-          columnHeadings: columnHeadings,
-          numberOfRecords: scrapped.length,
-        };
-      })
-      .then((extractedTable) => {
-        cy.log(extractedTable);
+  it('handles merged cells', () => {});
+
+  it('appends numeric sequence for duplicate column names', () => {});
+
+  it('show warning when locator return multiple tables', () => {
+    cy.get('.duplicated-table')
+      .scrapeTable()
+      .then((table) => {
+        expect(table.info).to.eq(
+          '!!! More than one table found - data extracted from the first table.  Ensure your table locator produces exactly 1 unique table.'
+        );
       });
   });
 });
