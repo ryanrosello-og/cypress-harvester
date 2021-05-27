@@ -32,7 +32,21 @@ Cypress.Commands.add(
     const conf = { ...defaultConfig(), ...options };
     let scrapped = [];
     let columnHeadings = [];
-    var trows = subject[0].rows;
+    const tableElement = subject[0];
+    var trows = tableElement.rows;
+
+    let dataTable = {
+      data: scrapped,
+      columnHeadings: columnHeadings,
+      numberOfRecords: scrapped.length,
+      info: '',
+    };
+
+    if (!isTableElement(tableElement)) {
+      dataTable.info = '!!! The element encountered was not a <table>';
+      return dataTable;
+    }
+
     Cypress.$.each(trows, (rowIndex, row) => {
       let o = new Object();
 
@@ -41,8 +55,10 @@ Cypress.Commands.add(
           // extract column headings
           const columName = extractColumnName(
             cell.textContent,
-            conf.propertyNameConvention
+            conf.propertyNameConvention,
+            cellIndex
           );
+
           columnHeadings[cellIndex] = columnHeadings.includes(columName)
             ? `${columName}_${cellIndex}`
             : columName;
@@ -56,26 +72,23 @@ Cypress.Commands.add(
       }
     });
 
-    const dataTable = {
-      data: scrapped,
-      columnHeadings: columnHeadings,
-      numberOfRecords: scrapped.length,
-      info: moreThanOneTable(subject),
-    };
-
-    const value = subject[0].tagName.toLowerCase();
     Cypress.log({
       name: 'scrapeTable',
-      message: value,
+      message: tableElement,
       $el: subject,
       consoleProps: () => {
         return {
-          value,
+          tableElement,
           options,
           dataTable,
         };
       },
     });
+
+    dataTable.data = scrapped;
+    dataTable.columnHeadings = columnHeadings;
+    dataTable.numberOfRecords = scrapped.length;
+    dataTable.info = moreThanOneTable(subject);
 
     return dataTable;
   }
@@ -92,8 +105,18 @@ const defaultConfig = () => {
 
 const validateConfig = () => {};
 
-const extractColumnName = (rawColumnName, propertyNameConvention) => {
+const isTableElement = (subject) => {
+  return subject.tagName === 'TABLE';
+};
+
+const extractColumnName = (
+  rawColumnName,
+  propertyNameConvention,
+  columnIndex
+) => {
   let colName = removeAllSpecialChars(rawColumnName);
+
+  if (colName === '') return `column_name_${columnIndex}`;
 
   if (propertyNameConvention.toLowerCase() === 'snakecase') {
     return Cypress._.snakeCase(colName);
@@ -111,7 +134,8 @@ const removeAllSpecialChars = (rawString) => {
 const moreThanOneTable = (table) => {
   const message =
     '!!! More than one table found - data extracted from the first table.  Ensure your table locator produces exactly 1 unique table.';
-  if (table.length > 0) {
+
+  if (table.length !== 1) {
     Cypress.log({
       name: 'scrapeTable',
       message: message,
@@ -124,4 +148,6 @@ const moreThanOneTable = (table) => {
     });
     return message;
   }
+
+  return '';
 };

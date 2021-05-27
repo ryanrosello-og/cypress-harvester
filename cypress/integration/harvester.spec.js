@@ -50,7 +50,7 @@ context('Harvester', () => {
     cy.get('#simpleTable')
       .scrapeTable()
       .then((extractedTable) => {
-        expect(extractedTable.numberOfRecords).to.eq(0);
+        expect(extractedTable.numberOfRecords).to.eq(3);
       });
   });
 
@@ -58,11 +58,30 @@ context('Harvester', () => {
     cy.get('#simpleTable')
       .scrapeTable()
       .then((extractedTable) => {
-        expect(extractedTable.data).to.deep.eq([]);
+        expect(extractedTable.data).to.deep.eq([
+          {
+            first_name: 'Russell',
+            last_name: 'Hobbs',
+            gender: 'Male',
+            age: '50',
+          },
+          {
+            first_name: 'John',
+            last_name: 'Campbell',
+            gender: 'Male',
+            age: '22',
+          },
+          {
+            first_name: 'Kate',
+            last_name: 'Smith',
+            gender: 'Female',
+            age: '33',
+          },
+        ]);
       });
   });
 
-  it('handles merged cells', () => {
+  it.only('handles merged cells', () => {
     cy.get('#mergedCells')
       .scrapeTable()
       .then((extractedTable) => {
@@ -74,7 +93,20 @@ context('Harvester', () => {
     cy.get('#blankColumnName')
       .scrapeTable()
       .then((extractedTable) => {
-        expect(extractedTable.data).to.deep.eq([]);
+        expect(extractedTable.columnHeadings).to.deep.eq([
+          'first_name',
+          'last_name',
+          'column_name_2',
+          'age',
+        ]);
+        expect(extractedTable.data).to.deep.eq([
+          {
+            first_name: 'Russell',
+            last_name: 'Hobbs',
+            column_name_2: 'Male',
+            age: '50',
+          },
+        ]);
       });
   });
 
@@ -83,6 +115,7 @@ context('Harvester', () => {
       .scrapeTable()
       .then((extractedTable) => {
         expect(extractedTable.data).to.deep.eq([]);
+        expect(extractedTable.numberOfRecords).to.eq(0);
       });
   });
 
@@ -90,7 +123,14 @@ context('Harvester', () => {
     cy.get('#onlyHeaders')
       .scrapeTable()
       .then((extractedTable) => {
+        expect(extractedTable.numberOfRecords).to.eq(0);
         expect(extractedTable.data).to.deep.eq([]);
+        expect(extractedTable.columnHeadings).to.deep.eq([
+          'first_name',
+          'last_name',
+          'gender',
+          'age',
+        ]);
       });
   });
 
@@ -98,7 +138,12 @@ context('Harvester', () => {
     cy.get('#repeatedColumnNames')
       .scrapeTable()
       .then((extractedTable) => {
-        expect(extractedTable.data).to.deep.eq([]);
+        expect(extractedTable.columnHeadings).to.deep.eq([
+          'first_name',
+          'last_name',
+          'last_name_2',
+          'age',
+        ]);
       });
   });
 
@@ -108,6 +153,16 @@ context('Harvester', () => {
       .then((table) => {
         expect(table.info).to.eq(
           '!!! More than one table found - data extracted from the first table.  Ensure your table locator produces exactly 1 unique table.'
+        );
+      });
+  });
+
+  it('throw an error when the locator does not yeild a <table>', () => {
+    cy.get('#notATable')
+      .scrapeTable()
+      .then((table) => {
+        expect(table.info).to.eq(
+          '!!! The element encountered was not a <table>'
         );
       });
   });
