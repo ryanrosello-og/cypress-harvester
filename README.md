@@ -3,7 +3,7 @@
 TODO :-
 
 [] merged cells
-[] infer integers
+✅ infer integers
 
 ✅ conf.appendTimestamp
 [] update doco
