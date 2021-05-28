@@ -23,6 +23,8 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+var path = require('path');
+
 Cypress.Commands.add(
   'scrapeTable',
   {
@@ -50,6 +52,8 @@ Cypress.Commands.add(
     Cypress.$.each(trows, (rowIndex, row) => {
       let o = new Object();
 
+      let skippableColumns = [];
+      let mergeCellOffest = 0;
       Cypress.$.each(row.cells, (cellIndex, cell) => {
         if (rowIndex == conf.rowIndexForHeadings) {
           // extract column headings
@@ -63,7 +67,20 @@ Cypress.Commands.add(
             ? `${columName}_${cellIndex}`
             : columName;
         } else {
-          o[columnHeadings[cellIndex]] = cell.textContent;
+          // if merged cell
+          debugger;
+          if (cell.hasAttribute('colspan')) {
+            let numCellSpan = parseInt(cell.getAttribute('colspan'));
+            mergeCellOffest = numCellSpan - 1;
+            for (let i = cellIndex; i < numCellSpan + cellIndex; i++) {
+              o[columnHeadings[i]] = cell.textContent;
+              skippableColumns.push(i);
+            }
+          } else if (!skippableColumns.includes(cellIndex + mergeCellOffest)) {
+            // o[columnHeadings[mergeCellOffest + cellIndex ]] =
+            //   cell.textContent;
+            o[columnHeadings[cellIndex]] = cell.textContent;
+          }
         }
       });
 
@@ -90,14 +107,28 @@ Cypress.Commands.add(
     dataTable.numberOfRecords = scrapped.length;
     dataTable.info = moreThanOneTable(subject);
 
-    return dataTable;
+    // save to file?
+    if (conf.exportFilePath && conf.exportFileName) {
+      exportTable(conf, dataTable.data);
+      dataTable.info = `${dataTable.info}\n Data table successfully saved to [${conf.exportFileName}]`;
+    }
+    return cy.wrap(dataTable);
   }
 );
+
+const exportTable = (config, jsonData) => {
+  cy.writeFile(
+    path.join(config.exportFilePath, config.exportFileName),
+    jsonData
+  );
+};
 
 const defaultConfig = () => {
   return {
     rowIndexForHeadings: 0,
-    exportFileName: '',
+    exportFileName: null,
+    exportFilePath: null,
+    includeTimestamp: false,
     propertyNameConvention: 'snakeCase',
     applyDataTypeConversion: false,
   };

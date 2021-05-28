@@ -5,6 +5,19 @@ context('Harvester', () => {
     cy.visit('./cypress/fixtures/test_tables.html');
   });
 
+  context('configuration [exportFileName]', () => {
+    it('writes the content of the dataTable to file', () => {
+      cy.get('#simpleTable')
+        .scrapeTable({
+          exportFileName: 'scrapedData.json',
+          exportFilePath: 'output/',
+        })
+        .then((table) => {
+          expect(table.info).to.contain('Data table successfully saved to');
+        });
+    });
+  });
+
   context('configuration [propertyNameConvention]', () => {
     it('cleans column headings when propertyNameConvention is not provided', () => {
       cy.get('#simpleTable')
@@ -81,11 +94,18 @@ context('Harvester', () => {
       });
   });
 
-  it.only('handles merged cells', () => {
+  it('handles merged cells', () => {
     cy.get('#mergedCells')
       .scrapeTable()
       .then((extractedTable) => {
-        expect(extractedTable.data).to.deep.eq([]);
+        expect(extractedTable.data).to.deep.eq([
+          {
+            first_name: 'Russell Hobbs',
+            last_name: 'Russell Hobbs',
+            gender: 'Male',
+            age: '50',
+          },
+        ]);
       });
   });
 

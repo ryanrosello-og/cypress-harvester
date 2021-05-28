@@ -2,14 +2,14 @@
 
 context('Harvester', () => {
   beforeEach(() => {
-    // cy.visit('https://www.worldometers.info/coronavirus/');
-    cy.visit(
-      'http://www.bom.gov.au/cgi-bin/climate/extremes/daily_extremes.cgi'
-    );
+    cy.visit('https://www.worldometers.info/coronavirus/');
+    // cy.visit(
+    //   'http://www.bom.gov.au/cgi-bin/climate/extremes/daily_extremes.cgi'
+    // );
   });
 
   it('using command', () => {
-    cy.get('table[summary="Table of daily extremes"]')
+    cy.get('table[id="main_table_countries_today"]')
       .should('be.visible')
       .scrapeTable({ rowIndexForHeadings: 0 });
   });
