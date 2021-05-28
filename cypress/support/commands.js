@@ -68,18 +68,21 @@ Cypress.Commands.add(
             : columName;
         } else {
           // if merged cell
-          debugger;
+
           if (cell.hasAttribute('colspan')) {
-            let numCellSpan = parseInt(cell.getAttribute('colspan'));
-            mergeCellOffest = numCellSpan - 1;
-            for (let i = cellIndex; i < numCellSpan + cellIndex; i++) {
+            debugger;
+            let numCellSpan =
+              parseInt(cell.getAttribute('colspan')) + cellIndex;
+            //mergeCellOffest = numCellSpan - 1;
+            for (let i = cellIndex; i <= numCellSpan - 1; i++) {
               o[columnHeadings[i]] = cell.textContent;
               skippableColumns.push(i);
+              mergeCellOffest++;
             }
-          } else if (!skippableColumns.includes(cellIndex + mergeCellOffest)) {
+          } else if (!skippableColumns.includes(cellIndex)) {
             // o[columnHeadings[mergeCellOffest + cellIndex ]] =
             //   cell.textContent;
-            o[columnHeadings[cellIndex]] = cell.textContent;
+            o[columnHeadings[cellIndex + mergeCellOffest]] = cell.textContent;
           }
         }
       });
@@ -109,18 +112,25 @@ Cypress.Commands.add(
 
     // save to file?
     if (conf.exportFilePath && conf.exportFileName) {
-      exportTable(conf, dataTable.data);
-      dataTable.info = `${dataTable.info}\n Data table successfully saved to [${conf.exportFileName}]`;
+      dataTable.info = `${dataTable.info}\n ${exportTable(
+        conf,
+        dataTable.data
+      )}`;
     }
     return cy.wrap(dataTable);
   }
 );
 
 const exportTable = (config, jsonData) => {
-  cy.writeFile(
-    path.join(config.exportFilePath, config.exportFileName),
-    jsonData
-  );
+  let fileName = config.exportFileName;
+  if (config.includeTimestamp) {
+    fileName = `${new Date().toISOString().replaceAll(':', '')}_${fileName}`;
+  }
+  cy.writeFile(path.join(config.exportFilePath, fileName), jsonData);
+  return `Data table successfully saved to [${path.join(
+    config.exportFilePath,
+    fileName
+  )}]`;
 };
 
 const defaultConfig = () => {

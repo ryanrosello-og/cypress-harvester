@@ -5,17 +5,29 @@ context('Harvester', () => {
     cy.visit('./cypress/fixtures/test_tables.html');
   });
 
-  context('configuration [exportFileName]', () => {
-    it('writes the content of the dataTable to file', () => {
-      cy.get('#simpleTable')
-        .scrapeTable({
-          exportFileName: 'scrapedData.json',
-          exportFilePath: 'output/',
-        })
-        .then((table) => {
-          expect(table.info).to.contain('Data table successfully saved to');
-        });
-    });
+  it('writes the content of the dataTable to file', () => {
+    cy.get('#simpleTable')
+      .scrapeTable({
+        exportFileName: 'scrapedData.json',
+        exportFilePath: 'cypress/downloads',
+      })
+      .then((table) => {
+        expect(table.info).to.contain('Data table successfully saved to');
+      });
+  });
+
+  it('able to add timestamp to the export file', () => {
+    cy.get('#simpleTable')
+      .scrapeTable({
+        exportFileName: 'scrapedData.json',
+        exportFilePath: 'cypress/downloads',
+        includeTimestamp: true,
+      })
+      .then((table) => {
+        expect(table.info).to.match(
+          /\d{4}-\d{2}-\d{2}T\d{6}.*Z_scrapedData.json/
+        );
+      });
   });
 
   context('configuration [propertyNameConvention]', () => {
