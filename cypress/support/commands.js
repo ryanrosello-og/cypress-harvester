@@ -25,6 +25,18 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 var path = require('path');
 
+const defaultConfig = () => {
+  return {
+    rowIndexForHeadings: 0,
+    exportFileName: null,
+    exportFilePath: null,
+    includeTimestamp: false,
+    propertyNameConvention: 'snakeCase',
+    applyDataTypeConversion: false,
+    decimalColumns: [],
+  };
+};
+
 Cypress.Commands.add(
   'scrapeTable',
   {
@@ -75,14 +87,23 @@ Cypress.Commands.add(
               parseInt(cell.getAttribute('colspan')) + cellIndex;
             //mergeCellOffest = numCellSpan - 1;
             for (let i = cellIndex; i <= numCellSpan - 1; i++) {
-              o[columnHeadings[i]] = cell.textContent;
+              o[columnHeadings[i]] = applyDataConversion(
+                conf.decimalColumns,
+                i,
+                cell.textContent
+              );
               skippableColumns.push(i);
               mergeCellOffest++;
             }
           } else if (!skippableColumns.includes(cellIndex)) {
             // o[columnHeadings[mergeCellOffest + cellIndex ]] =
             //   cell.textContent;
-            o[columnHeadings[cellIndex + mergeCellOffest]] = cell.textContent;
+            o[columnHeadings[cellIndex + mergeCellOffest]] =
+              applyDataConversion(
+                conf.decimalColumns,
+                cellIndex,
+                cell.textContent
+              );
           }
         }
       });
@@ -133,21 +154,18 @@ const exportTable = (config, jsonData) => {
   )}]`;
 };
 
-const defaultConfig = () => {
-  return {
-    rowIndexForHeadings: 0,
-    exportFileName: null,
-    exportFilePath: null,
-    includeTimestamp: false,
-    propertyNameConvention: 'snakeCase',
-    applyDataTypeConversion: false,
-  };
+const isTableElement = (subject) => {
+  return subject.tagName.toLowerCase() === 'table';
 };
 
-const validateConfig = () => {};
+const applyDataConversion = (columnsToConvert, columnIndex, rawCellValue) => {
+  if (columnsToConvert.length === 0) return rawCellValue;
 
-const isTableElement = (subject) => {
-  return subject.tagName === 'TABLE';
+  if (columnsToConvert.includes(columnIndex)) {
+    return Number(rawCellValue.replace(/[^0-9\.-]+/g, ''));
+  } else {
+    return rawCellValue;
+  }
 };
 
 const extractColumnName = (

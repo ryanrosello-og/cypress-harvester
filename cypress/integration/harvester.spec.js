@@ -5,6 +5,32 @@ context('Harvester', () => {
     cy.visit('./cypress/fixtures/test_tables.html');
   });
 
+  it('applies data conversion to specified column indexes', () => {
+    cy.get('#numerics')
+      .scrapeTable({
+        decimalColumns: [1, 2],
+      })
+      .then((table) => {
+        expect(table.data).to.deep.eq([
+          {
+            month: 'January',
+            savings: 100,
+            balance: 150.3,
+          },
+          {
+            month: 'February',
+            savings: 80.55,
+            balance: 99.3,
+          },
+          {
+            month: 'Sum',
+            savings: -180,
+            balance: -220,
+          },
+        ]);
+      });
+  });
+
   it('writes the content of the dataTable to file', () => {
     cy.get('#simpleTable')
       .scrapeTable({
