@@ -2,10 +2,11 @@
   "name": "cypress-harvester",
   "version": "1.0.0",
   "description": "Extracts repeating elements from the DOM onto a more friendly json format",
-  "main": "index.js",
+  "main": "cypress/support/commands.js",
   "scripts": {
     "prettier": "prettier --write --loglevel warn \"**/**/*.js\"",
-    "cytest": "./node_modules/.bin/cypress open"
+    "cytest": "./node_modules/.bin/cypress open",
+    "npm:gen": "pack"
   },
   "repository": {
     "type": "git",
@@ -30,5 +31,6 @@
     "singleQuote": true,
     "tabWidth": 2,
     "semi": true
-  }
+  },
+  "devDependencies": {}
 }
