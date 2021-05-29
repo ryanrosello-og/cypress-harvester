@@ -190,7 +190,7 @@ const removeAllSpecialChars = (rawString) => {
 };
 
 const removeAllNewlineChars = (rawString) => {
-  return rawString.replace(/(\r\n|\n|\r)/gm, '');
+  return rawString.replace(/(\r\n|\n|\r)/gm, '').trim();
 };
 
 const moreThanOneTable = (table) => {

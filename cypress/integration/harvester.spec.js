@@ -101,7 +101,16 @@ context('Harvester', () => {
     cy.get('.cells-have-elements')
       .scrapeTable({ removeAllNewlineCharacters: true })
       .then((extractedTable) => {
-        expect(extractedTable.numberOfRecords).to.eq(31);
+        expect(extractedTable.data).to.deep.eq([
+          {
+            column_1: 'Row 1: Cell 1 Change',
+            column_2: 'Row 1: Cell 2 Change',
+          },
+          {
+            column_1: 'Row 2: Cell 1 Change',
+            column_2: 'Row 2: Cell 2 Change',
+          },
+        ]);
       });
   });
 
