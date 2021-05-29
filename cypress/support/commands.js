@@ -46,13 +46,15 @@ Cypress.Commands.add(
   (subject, options) => {
     const conf = { ...defaultConfig(), ...options };
     let scrapped = [];
-    let columnHeadings = [];
+    let propertyNames = [];
+    let columnLabels = [];
     const tableElement = subject[0];
     var trows = tableElement.rows;
 
     let dataTable = {
       data: scrapped,
-      columnHeadings: columnHeadings,
+      propertyNames: propertyNames,
+      columnLabels: columnLabels,
       numberOfRecords: scrapped.length,
       info: '',
     };
@@ -68,6 +70,7 @@ Cypress.Commands.add(
 
       Cypress.$.each(row.cells, (cellIndex, cell) => {
         if (rowIndex == conf.rowIndexForHeadings) {
+          columnLabels[cellIndex] = cell.textContent; // unmodified column labels
           // extract column headings
           const columName = extractColumnName(
             cell.textContent,
@@ -75,7 +78,7 @@ Cypress.Commands.add(
             cellIndex
           );
 
-          columnHeadings[cellIndex] = columnHeadings.includes(columName)
+          propertyNames[cellIndex] = propertyNames.includes(columName)
             ? `${columName}_${cellIndex}`
             : columName;
         } else {
@@ -83,16 +86,19 @@ Cypress.Commands.add(
             ? removeAllNewlineChars(cell.textContent)
             : cell.textContent;
           // if merged cell
-          if (cell.hasAttribute('colspan')) {           
+          if (cell.hasAttribute('colspan')) {
             let numCellSpan = parseInt(cell.getAttribute('colspan'));
             for (let i = 0; i < numCellSpan; i++) {
-              o[columnHeadings[cellIndex + mergeCellOffest + i]] =
+              o[propertyNames[cellIndex + mergeCellOffest + i]] =
                 applyDataConversion(conf.decimalColumns, i, cellValue);
             }
             mergeCellOffest = mergeCellOffest + (numCellSpan - 1);
           } else {
-            o[columnHeadings[cellIndex + mergeCellOffest]] =
-              applyDataConversion(conf.decimalColumns, cellIndex, cellValue);
+            o[propertyNames[cellIndex + mergeCellOffest]] = applyDataConversion(
+              conf.decimalColumns,
+              cellIndex,
+              cellValue
+            );
           }
         }
       });
@@ -116,7 +122,8 @@ Cypress.Commands.add(
     });
 
     dataTable.data = scrapped;
-    dataTable.columnHeadings = columnHeadings;
+    dataTable.propertyNames = propertyNames;
+    dataTable.columnLabels = columnLabels;
     dataTable.numberOfRecords = scrapped.length;
     dataTable.info = moreThanOneTable(subject);
 

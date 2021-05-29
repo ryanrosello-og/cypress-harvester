@@ -3,11 +3,14 @@
 context('Harvester', () => {
   beforeEach(() => {
     // cy.visit('https://example.cypress.io/commands/aliasing')
-    cy.visit('./cypress/fixtures/test_tables.html');
+    cy.visit(
+      'https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Basics'
+    );
   });
 
   it('cy.fixture() - load a fixture', () => {
-    cy.get('.cells-have-elements')
+    cy.get('#content table')
+      .eq(1)
       .scrapeTable()
       .then((f) => {
         cy.log(f);

@@ -42,6 +42,19 @@ context('Harvester', () => {
       });
   });
 
+  it('exposes table column names as [columnLabels]', () => {
+    cy.get('#simpleTable')
+      .scrapeTable()
+      .then((table) => {
+        expect(table.columnLabels).to.deep.eq([
+          'First Name',
+          'Last Name',
+          'Gender',
+          'Age',
+        ]);
+      });
+  });
+
   it('able to add timestamp to the export file', () => {
     cy.get('#simpleTable')
       .scrapeTable({
@@ -61,7 +74,7 @@ context('Harvester', () => {
       cy.get('#simpleTable')
         .scrapeTable({ propertyNameConvention: '' })
         .then((table) => {
-          expect(table.columnHeadings).to.deep.eq([
+          expect(table.propertyNames).to.deep.eq([
             'First Name',
             'Last Name',
             'Gender',
@@ -74,7 +87,7 @@ context('Harvester', () => {
       cy.get('#simpleTable')
         .scrapeTable({ propertyNameConvention: 'camelCase' })
         .then((table) => {
-          expect(table.columnHeadings).to.deep.eq([
+          expect(table.propertyNames).to.deep.eq([
             'firstName',
             'lastName',
             'gender',
@@ -87,7 +100,7 @@ context('Harvester', () => {
       cy.get('#simpleTable')
         .scrapeTable({ propertyNameConvention: 'snakeCase' })
         .then((table) => {
-          expect(table.columnHeadings).to.deep.eq([
+          expect(table.propertyNames).to.deep.eq([
             'first_name',
             'last_name',
             'gender',
@@ -183,7 +196,7 @@ context('Harvester', () => {
     cy.get('#blankColumnName')
       .scrapeTable()
       .then((table) => {
-        expect(table.columnHeadings).to.deep.eq([
+        expect(table.propertyNames).to.deep.eq([
           'first_name',
           'last_name',
           'column_name_2',
@@ -215,7 +228,7 @@ context('Harvester', () => {
       .then((table) => {
         expect(table.numberOfRecords).to.eq(0);
         expect(table.data).to.deep.eq([]);
-        expect(table.columnHeadings).to.deep.eq([
+        expect(table.propertyNames).to.deep.eq([
           'first_name',
           'last_name',
           'gender',
@@ -228,7 +241,7 @@ context('Harvester', () => {
     cy.get('#repeatedColumnNames')
       .scrapeTable()
       .then((table) => {
-        expect(table.columnHeadings).to.deep.eq([
+        expect(table.propertyNames).to.deep.eq([
           'first_name',
           'last_name',
           'last_name_2',

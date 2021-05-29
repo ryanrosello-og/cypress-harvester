@@ -19,10 +19,28 @@ import 'cypress-harvester'
 
 ## Example - Testing static <table>
 
+| Created             | Account Id | Account Holder       | Balance |
+|---------------------|:----------:|----------------------|--------:|
+| 10-04-2021 12:00:17 | UA-10876-1 | James L. Silver      |   $50.5 |
+| 10-04-2021 13:00:17 | UA-10346-1 | Christian A. Lavalle |  -22.98 |
+| 10-04-2021 13:40:17 | UA-11876-3 | Terrell E. Evert     |     $33 |
+
+
 ## Example - Web scraping records
 
 
 ## Configuration
+
+| Property                   | Default Value | Type    | Purpose |
+|----------------------------|---------------|---------|---------|
+| rowIndexForHeadings        | 0             | int     | TODO    |
+| exportFileName             |               | string  | TODO    |
+| exportFilePath             |               | string  | TODO    |
+| includeTimestamp           | false         | boolean | TODO    |
+| propertyNameConvention     | snakeCase     | string  | TODO    |
+| applyDataTypeConversion    | false         | boolean | TODO    |
+| removeAllNewlineCharacters | false         | boolean | TODO    |
+| decimalColumns             | []            | array   | TODO    |
 
 
 ## More advanced examples
