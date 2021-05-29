@@ -58,6 +58,7 @@ import 'cypress-harvester'
 TODO :-
 
 
+[] rowspan - rowspan + colspan combo
 [] update doco
 [] create npm package
 [] pair of repeating elements
