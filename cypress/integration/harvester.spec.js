@@ -60,8 +60,8 @@ context('Harvester', () => {
     it('cleans column headings when propertyNameConvention is not provided', () => {
       cy.get('#simpleTable')
         .scrapeTable({ propertyNameConvention: '' })
-        .then((extractedTable) => {
-          expect(extractedTable.columnHeadings).to.deep.eq([
+        .then((table) => {
+          expect(table.columnHeadings).to.deep.eq([
             'First Name',
             'Last Name',
             'Gender',
@@ -73,8 +73,8 @@ context('Harvester', () => {
     it('able to format column names as camel case', () => {
       cy.get('#simpleTable')
         .scrapeTable({ propertyNameConvention: 'camelCase' })
-        .then((extractedTable) => {
-          expect(extractedTable.columnHeadings).to.deep.eq([
+        .then((table) => {
+          expect(table.columnHeadings).to.deep.eq([
             'firstName',
             'lastName',
             'gender',
@@ -86,8 +86,8 @@ context('Harvester', () => {
     it('able to format column names as snake case', () => {
       cy.get('#simpleTable')
         .scrapeTable({ propertyNameConvention: 'snakeCase' })
-        .then((extractedTable) => {
-          expect(extractedTable.columnHeadings).to.deep.eq([
+        .then((table) => {
+          expect(table.columnHeadings).to.deep.eq([
             'first_name',
             'last_name',
             'gender',
@@ -100,8 +100,8 @@ context('Harvester', () => {
   it('can remove newline characters from table cell using the config [removeAllNewlineCharacters] ', () => {
     cy.get('.cells-have-elements')
       .scrapeTable({ removeAllNewlineCharacters: true })
-      .then((extractedTable) => {
-        expect(extractedTable.data).to.deep.eq([
+      .then((table) => {
+        expect(table.data).to.deep.eq([
           {
             column_1: 'Row 1: Cell 1 Change',
             column_2: 'Row 1: Cell 2 Change',
@@ -117,16 +117,16 @@ context('Harvester', () => {
   it('determines the correct number of rows in the table', () => {
     cy.get('#simpleTable')
       .scrapeTable()
-      .then((extractedTable) => {
-        expect(extractedTable.numberOfRecords).to.eq(3);
+      .then((table) => {
+        expect(table.numberOfRecords).to.eq(3);
       });
   });
 
   it('retrieves the correct table cell values', () => {
     cy.get('#simpleTable')
       .scrapeTable()
-      .then((extractedTable) => {
-        expect(extractedTable.data).to.deep.eq([
+      .then((table) => {
+        expect(table.data).to.deep.eq([
           {
             first_name: 'Russell',
             last_name: 'Hobbs',
@@ -152,8 +152,8 @@ context('Harvester', () => {
   it('handles merged cells', () => {
     cy.get('#mergedCells')
       .scrapeTable()
-      .then((extractedTable) => {
-        expect(extractedTable.data).to.deep.eq([
+      .then((table) => {
+        expect(table.data).to.deep.eq([
           {
             first_name: 'Russell Hobbs',
             last_name: 'Russell Hobbs',
@@ -167,14 +167,14 @@ context('Harvester', () => {
   it('handles blank column name', () => {
     cy.get('#blankColumnName')
       .scrapeTable()
-      .then((extractedTable) => {
-        expect(extractedTable.columnHeadings).to.deep.eq([
+      .then((table) => {
+        expect(table.columnHeadings).to.deep.eq([
           'first_name',
           'last_name',
           'column_name_2',
           'age',
         ]);
-        expect(extractedTable.data).to.deep.eq([
+        expect(table.data).to.deep.eq([
           {
             first_name: 'Russell',
             last_name: 'Hobbs',
@@ -188,19 +188,19 @@ context('Harvester', () => {
   it('returns no record when a blank table is encountered', () => {
     cy.get('#emptyTable')
       .scrapeTable()
-      .then((extractedTable) => {
-        expect(extractedTable.data).to.deep.eq([]);
-        expect(extractedTable.numberOfRecords).to.eq(0);
+      .then((table) => {
+        expect(table.data).to.deep.eq([]);
+        expect(table.numberOfRecords).to.eq(0);
       });
   });
 
   it('returns no records when a table only contains the header row', () => {
     cy.get('#onlyHeaders')
       .scrapeTable()
-      .then((extractedTable) => {
-        expect(extractedTable.numberOfRecords).to.eq(0);
-        expect(extractedTable.data).to.deep.eq([]);
-        expect(extractedTable.columnHeadings).to.deep.eq([
+      .then((table) => {
+        expect(table.numberOfRecords).to.eq(0);
+        expect(table.data).to.deep.eq([]);
+        expect(table.columnHeadings).to.deep.eq([
           'first_name',
           'last_name',
           'gender',
@@ -212,8 +212,8 @@ context('Harvester', () => {
   it('appends numeric sequence for duplicate column names', () => {
     cy.get('#repeatedColumnNames')
       .scrapeTable()
-      .then((extractedTable) => {
-        expect(extractedTable.columnHeadings).to.deep.eq([
+      .then((table) => {
+        expect(table.columnHeadings).to.deep.eq([
           'first_name',
           'last_name',
           'last_name_2',

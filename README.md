@@ -27,6 +27,11 @@ import 'cypress-harvester'
 
 ## More advanced examples
 
+* Table contains a specific record
+* Sorting
+* Aggregate column
+* Large dataset via fixture
+* Large dataset using snapshot
 
 
 

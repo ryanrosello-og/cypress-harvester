@@ -64,9 +64,8 @@ Cypress.Commands.add(
 
     Cypress.$.each(trows, (rowIndex, row) => {
       let o = new Object();
-
-      let skippableColumns = [];
       let mergeCellOffest = 0;
+      
       Cypress.$.each(row.cells, (cellIndex, cell) => {
         if (rowIndex == conf.rowIndexForHeadings) {
           // extract column headings
@@ -85,22 +84,18 @@ Cypress.Commands.add(
             : cell.textContent;
           // if merged cell
           if (cell.hasAttribute('colspan')) {
-            debugger;
             let numCellSpan =
-              parseInt(cell.getAttribute('colspan')) + cellIndex;
-            //mergeCellOffest = numCellSpan - 1;
-            for (let i = cellIndex; i <= numCellSpan - 1; i++) {
-              o[columnHeadings[i]] = applyDataConversion(
+              parseInt(cell.getAttribute('colspan'));
+            for (let i = 0; i < numCellSpan ; i++) {
+              o[columnHeadings[cellIndex + i]] = applyDataConversion(
                 conf.decimalColumns,
                 i,
                 cellValue
-              );
-              skippableColumns.push(i);
-              mergeCellOffest++;
+              );              
             }
-          } else if (!skippableColumns.includes(cellIndex)) {
-            // o[columnHeadings[mergeCellOffest + cellIndex ]] =
-            //   cell.textContent;
+            mergeCellOffest = mergeCellOffest+ (numCellSpan - 1)
+            debugger
+          } else {
             o[columnHeadings[cellIndex + mergeCellOffest]] =
               applyDataConversion(conf.decimalColumns, cellIndex, cellValue);
           }
