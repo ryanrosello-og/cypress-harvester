@@ -5,7 +5,7 @@ context('Harvester', () => {
     cy.visit('./cypress/fixtures/test_tables.html');
   });
 
-  it('applies data conversion to specified column indexes', () => {
+  it('applies data conversion to specified column [decimalColumns] config property', () => {
     cy.get('#numerics')
       .scrapeTable({
         decimalColumns: [1, 2],
@@ -155,10 +155,25 @@ context('Harvester', () => {
       .then((table) => {
         expect(table.data).to.deep.eq([
           {
+            emp_id: '7334324',
             first_name: 'Russell Hobbs',
             last_name: 'Russell Hobbs',
             gender: 'Male',
             age: '50',
+          },
+          {
+            emp_id: '7334324',
+            first_name: '7334324',
+            last_name: '7334324',
+            gender: '7334324',
+            age: '7334324',
+          },
+          {
+            emp_id: '7334324',
+            first_name: '7334324',
+            last_name: 'Russell Hobbs',
+            gender: 'Male',
+            age: 'Male',
           },
         ]);
       });

@@ -65,7 +65,7 @@ Cypress.Commands.add(
     Cypress.$.each(trows, (rowIndex, row) => {
       let o = new Object();
       let mergeCellOffest = 0;
-      
+
       Cypress.$.each(row.cells, (cellIndex, cell) => {
         if (rowIndex == conf.rowIndexForHeadings) {
           // extract column headings
@@ -83,18 +83,13 @@ Cypress.Commands.add(
             ? removeAllNewlineChars(cell.textContent)
             : cell.textContent;
           // if merged cell
-          if (cell.hasAttribute('colspan')) {
-            let numCellSpan =
-              parseInt(cell.getAttribute('colspan'));
-            for (let i = 0; i < numCellSpan ; i++) {
-              o[columnHeadings[cellIndex + i]] = applyDataConversion(
-                conf.decimalColumns,
-                i,
-                cellValue
-              );              
+          if (cell.hasAttribute('colspan')) {           
+            let numCellSpan = parseInt(cell.getAttribute('colspan'));
+            for (let i = 0; i < numCellSpan; i++) {
+              o[columnHeadings[cellIndex + mergeCellOffest + i]] =
+                applyDataConversion(conf.decimalColumns, i, cellValue);
             }
-            mergeCellOffest = mergeCellOffest+ (numCellSpan - 1)
-            debugger
+            mergeCellOffest = mergeCellOffest + (numCellSpan - 1);
           } else {
             o[columnHeadings[cellIndex + mergeCellOffest]] =
               applyDataConversion(conf.decimalColumns, cellIndex, cellValue);

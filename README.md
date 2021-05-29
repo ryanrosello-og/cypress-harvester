@@ -39,16 +39,15 @@ import 'cypress-harvester'
 
 TODO :-
 
-[] merged cells
-✅ infer integers
 
-✅ conf.appendTimestamp
 [] update doco
 [] create npm package
-
 [] pair of repeating elements
 ✅ as chain command
 ✅ handle duplicate columns
+✅ merged cells
+✅ infer integers
+✅ conf.appendTimestamp
 ✅ handle duplicate webtables
 [] config:
     ✅ jsonify column headings
