@@ -33,6 +33,7 @@ const defaultConfig = () => {
     includeTimestamp: false,
     propertyNameConvention: 'snakeCase',
     applyDataTypeConversion: false,
+    removeAllNewlineCharacters: false,
     decimalColumns: [],
   };
 };
@@ -79,8 +80,10 @@ Cypress.Commands.add(
             ? `${columName}_${cellIndex}`
             : columName;
         } else {
+          let cellValue = conf.removeAllNewlineCharacters
+            ? removeAllNewlineChars(cell.textContent)
+            : cell.textContent;
           // if merged cell
-
           if (cell.hasAttribute('colspan')) {
             debugger;
             let numCellSpan =
@@ -90,7 +93,7 @@ Cypress.Commands.add(
               o[columnHeadings[i]] = applyDataConversion(
                 conf.decimalColumns,
                 i,
-                cell.textContent
+                cellValue
               );
               skippableColumns.push(i);
               mergeCellOffest++;
@@ -99,11 +102,7 @@ Cypress.Commands.add(
             // o[columnHeadings[mergeCellOffest + cellIndex ]] =
             //   cell.textContent;
             o[columnHeadings[cellIndex + mergeCellOffest]] =
-              applyDataConversion(
-                conf.decimalColumns,
-                cellIndex,
-                cell.textContent
-              );
+              applyDataConversion(conf.decimalColumns, cellIndex, cellValue);
           }
         }
       });
@@ -187,7 +186,11 @@ const extractColumnName = (
 };
 
 const removeAllSpecialChars = (rawString) => {
-  return rawString.replace(/[^a-zA-Z ]/g, '');
+  return rawString.replace(/[^a-zA-Z0-9 ]/g, '');
+};
+
+const removeAllNewlineChars = (rawString) => {
+  return rawString.replace(/(\r\n|\n|\r)/gm, '');
 };
 
 const moreThanOneTable = (table) => {

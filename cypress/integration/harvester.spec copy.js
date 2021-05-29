@@ -2,13 +2,19 @@
 
 context('Harvester', () => {
   beforeEach(() => {
-    cy.visit('https://www.worldometers.info/coronavirus/');
-    // cy.visit(
-    //   'http://www.bom.gov.au/cgi-bin/climate/extremes/daily_extremes.cgi'
-    // );
+    // cy.visit('https://example.cypress.io/commands/aliasing')
+    cy.visit('./cypress/fixtures/test_tables.html');
   });
 
-  it('using command', () => {
+  it('cy.fixture() - load a fixture', () => {
+    cy.get('.cells-have-elements')
+      .scrapeTable()
+      .then((f) => {
+        cy.log(f);
+      });
+  });
+
+  xit('using command', () => {
     cy.get('table[id="main_table_countries_today"]')
       .should('be.visible')
       .scrapeTable({ rowIndexForHeadings: 0 });

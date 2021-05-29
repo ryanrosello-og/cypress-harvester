@@ -97,6 +97,14 @@ context('Harvester', () => {
     });
   });
 
+  it('can remove newline characters from table cell using the config [removeAllNewlineCharacters] ', () => {
+    cy.get('.cells-have-elements')
+      .scrapeTable({ removeAllNewlineCharacters: true })
+      .then((extractedTable) => {
+        expect(extractedTable.numberOfRecords).to.eq(31);
+      });
+  });
+
   it('determines the correct number of rows in the table', () => {
     cy.get('#simpleTable')
       .scrapeTable()
