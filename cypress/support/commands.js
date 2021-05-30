@@ -24,6 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 var path = require('path');
+import DataTable from '../support/data-table';
 
 const defaultConfig = () => {
   return {
@@ -58,6 +59,8 @@ Cypress.Commands.add(
       numberOfRecords: scrapped.length,
       info: '',
     };
+
+    let d = new DataTable();
 
     if (!isTableElement(tableElement)) {
       dataTable.info = '!!! The element encountered was not a <table>';
@@ -105,6 +108,7 @@ Cypress.Commands.add(
 
       if (rowIndex !== conf.rowIndexForHeadings) {
         scrapped.push(o);
+        d.addItem(o);
       }
     });
 
@@ -133,8 +137,13 @@ Cypress.Commands.add(
         conf,
         dataTable.data
       )}`;
+      d.flagAsExported(
+        `${dataTable.info}\n ${exportTable(conf, dataTable.data)}`
+      );
     }
-    return cy.wrap(dataTable);
+    // return cy.wrap(dataTable);
+    d.columnLabels = columnLabels;
+    return cy.wrap(d);
   }
 );
 
