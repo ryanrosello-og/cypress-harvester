@@ -58,7 +58,7 @@ Given a simple html table below:
 ```
 
 
-When table is passed through the Cypress harvester, Cypress is able to easily work with the json representation of the table:
+When table is passed through the Cypress harvester, Cypress is able to easily extract data and convert to a json representation of the table:
 
 ```
 cy.get('#example')
