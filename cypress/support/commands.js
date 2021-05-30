@@ -143,6 +143,7 @@ Cypress.Commands.add(
     }
     // return cy.wrap(dataTable);
     d.columnLabels = columnLabels;
+    d.propertyNames = propertyNames;
     return cy.wrap(d);
   }
 );

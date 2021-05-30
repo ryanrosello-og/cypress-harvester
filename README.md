@@ -64,8 +64,7 @@ When table is passed through the Cypress harvester, Cypress is able to easily ex
 cy.get('#example')
   .scrapeTable()
   .then((table) => {
-    expect(table.numberOfRecords).to.eq(3);
-    expect(table.data).to.deep.eq([
+    expect(table.getData()).to.deep.eq([
       {
         created: '10-04-2021 13:40:17',
         account_id: 'UA-11876-3',
@@ -82,7 +81,7 @@ cy.get('#example')
         created: '10-04-2021 13:00:17',
         account_id: 'UA-10346-1',
         account_holder: 'Christian A. Lavalle',
-        balance: '-22.98',
+        balance: '$-22.98',
       },
     ]);
   });
@@ -99,11 +98,69 @@ cy.get('#example')
     exportFilePath: 'cypress/downloads',
   })
   .then((table) => {
-    expect(table.info).to.contain('Data table successfully saved');
+    expect(table.exportStatus).to.contain(
+      'Data table successfully saved'
+    );
   });
 ```
 A json representation of the html table is then saved to a json file within the `cypress/downloads` folder:
 
+## Other Useful assertions
+
+```
+cy.get('#example')
+  .scrapeTable()
+  .then((table) => {
+    expect(table.rowCount(), 'correct number of rows').to.eq(3);
+    expect(
+      table.hasItem({
+        account_holder: 'Christian A. Lavalle',
+      }),
+      'valid account exist'
+    ).to.have.property('account_id', 'UA-10346-1');
+
+    expect(
+      table.hasItem({
+        account_holder: 'John Babs',
+      }),
+      'non-existent account holder should not be present'
+    ).to.be.undefined;
+
+    expect(table.columnLabels, 'correct column labels shown').to.deep.eq([
+      'Created',
+      'Account Id',
+      'Account Holder',
+      'Balance',
+    ]);
+
+    expect(
+      table.isPropertySorted(['account_id'], ['desc']),
+      'account_id sorted in desc order'
+    ).to.be.true;
+  });
+```
+
+## Use fixture as baseline
+
+```
+cy.get('#example')
+  .scrapeTable()
+  .then((table) => {
+    cy.fixture('expected_table_values').then((expectedTableData) => {
+      expect(table.getData()).to.deep.eq(expectedTableData);
+    });
+  });
+```
+
+## Infer data types and aggregate columns
+
+```
+cy.get('#example')
+  .scrapeTable({ decimalColumns: [3] })
+  .then((table) => {
+    expect(table.sumOfColumn('balance', 2)).to.eq(60.52);
+  });
+```
 
 
 ## Configuration
@@ -127,6 +184,14 @@ A json representation of the html table is then saved to a json file within the 
 * Large dataset via fixture
 * Large dataset using snapshot
 
+## Merge cells
+
+Merges cells are normalized to...
+
+In the example beolow:
+
+
+This treated as 
 
 
 

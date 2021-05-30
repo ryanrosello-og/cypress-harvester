@@ -11,7 +11,7 @@ context('Harvester', () => {
         decimalColumns: [1, 2],
       })
       .then((table) => {
-        expect(table.data).to.deep.eq([
+        expect(table.getData()).to.deep.eq([
           {
             month: 'January',
             savings: 100,
@@ -38,7 +38,7 @@ context('Harvester', () => {
         exportFilePath: 'cypress/downloads',
       })
       .then((table) => {
-        expect(table.info).to.contain('Data table successfully saved to');
+        expect(table.exportStatus).to.contain('Data table successfully saved');
       });
   });
 
@@ -63,7 +63,7 @@ context('Harvester', () => {
         includeTimestamp: true,
       })
       .then((table) => {
-        expect(table.info).to.match(
+        expect(table.exportStatus).to.match(
           /\d{4}-\d{2}-\d{2}T\d{6}.*Z_scrapedData.json/
         );
       });
@@ -74,7 +74,7 @@ context('Harvester', () => {
       cy.get('#simpleTable')
         .scrapeTable({ propertyNameConvention: '' })
         .then((table) => {
-          expect(table.propertyNames).to.deep.eq([
+          expect(table.columnLabels).to.deep.eq([
             'First Name',
             'Last Name',
             'Gender',
@@ -114,7 +114,7 @@ context('Harvester', () => {
     cy.get('.cells-have-elements')
       .scrapeTable({ removeAllNewlineCharacters: true })
       .then((table) => {
-        expect(table.data).to.deep.eq([
+        expect(table.getData()).to.deep.eq([
           {
             column_1: 'Row 1: Cell 1 Change',
             column_2: 'Row 1: Cell 2 Change',
@@ -131,7 +131,7 @@ context('Harvester', () => {
     cy.get('#simpleTable')
       .scrapeTable()
       .then((table) => {
-        expect(table.numberOfRecords).to.eq(3);
+        expect(table.rowCount()).to.eq(3);
       });
   });
 
@@ -139,7 +139,7 @@ context('Harvester', () => {
     cy.get('#simpleTable')
       .scrapeTable()
       .then((table) => {
-        expect(table.data).to.deep.eq([
+        expect(table.getData()).to.deep.eq([
           {
             first_name: 'Russell',
             last_name: 'Hobbs',
@@ -166,7 +166,7 @@ context('Harvester', () => {
     cy.get('#mergedCells')
       .scrapeTable()
       .then((table) => {
-        expect(table.data).to.deep.eq([
+        expect(table.getData()).to.deep.eq([
           {
             emp_id: '7334324',
             first_name: 'Russell Hobbs',
@@ -202,7 +202,7 @@ context('Harvester', () => {
           'column_name_2',
           'age',
         ]);
-        expect(table.data).to.deep.eq([
+        expect(table.getData()).to.deep.eq([
           {
             first_name: 'Russell',
             last_name: 'Hobbs',
@@ -217,8 +217,8 @@ context('Harvester', () => {
     cy.get('#emptyTable')
       .scrapeTable()
       .then((table) => {
-        expect(table.data).to.deep.eq([]);
-        expect(table.numberOfRecords).to.eq(0);
+        expect(table.getData()).to.deep.eq([]);
+        expect(table.rowCount()).to.eq(0);
       });
   });
 
@@ -226,8 +226,8 @@ context('Harvester', () => {
     cy.get('#onlyHeaders')
       .scrapeTable()
       .then((table) => {
-        expect(table.numberOfRecords).to.eq(0);
-        expect(table.data).to.deep.eq([]);
+        expect(table.rowCount()).to.eq(0);
+        expect(table.getData()).to.deep.eq([]);
         expect(table.propertyNames).to.deep.eq([
           'first_name',
           'last_name',

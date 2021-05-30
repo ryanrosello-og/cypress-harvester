@@ -93,9 +93,7 @@ context('Harvester', () => {
         exportFilePath: 'cypress/downloads',
       })
       .then((table) => {
-        expect(table.exportStatus).to.contain(
-          'Data table successfully saved to'
-        );
+        expect(table.exportStatus).to.contain('Data table successfully saved');
       });
   });
 });
