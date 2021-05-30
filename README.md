@@ -22,22 +22,87 @@ import 'cypress-harvester'
 Given a simple html table below:
 
 | Created             | Account Id | Account Holder       | Balance |
-|---------------------|:----------:|----------------------|--------:|
-| 10-04-2021 12:00:17 | UA-10876-1 | James L. Silver      |   $50.5 |
-| 10-04-2021 13:00:17 | UA-10346-1 | Christian A. Lavalle |  $-22.98 |
+|---------------------|------------|----------------------|--------:|
 | 10-04-2021 13:40:17 | UA-11876-3 | Terrell E. Evert     |     $33 |
-
-When table is passed through the Cypress harvester:
-
-
-
-Then Cypress is able to easily work with the json representation of the table:
+| 10-04-2021 12:00:17 | UA-10876-1 | James L. Silver      |   $50.5 |
+| 10-04-2021 13:00:17 | UA-10346-1 | Christian A. Lavalle | $-22.98 |
 
 
+```
+<table id="example" border="1">
+<tr>
+    <td>Created</td>
+    <td>Account Id</td>
+    <td>Account Holder</td>
+    <td>Balance</td>
+</tr>
+<tr>
+    <td>10-04-2021 13:40:17</td>
+    <td>UA-11876-3</td>
+    <td>Terrell E. Evert</td>
+    <td>$33</td>
+</tr>    
+<tr>
+    <td>10-04-2021 12:00:17</td>
+    <td>UA-10876-1</td>
+    <td>James L. Silver</td>
+    <td>$50.5</td>
+</tr>
+<tr>
+    <td>10-04-2021 13:00:17</td>
+    <td>UA-10346-1</td>
+    <td>Christian A. Lavalle</td>
+    <td>$-22.98</td>
+</tr>
+</table>
+```
+
+
+When table is passed through the Cypress harvester, Cypress is able to easily work with the json representation of the table:
+
+```
+cy.get('#example')
+  .scrapeTable()
+  .then((table) => {
+    expect(table.numberOfRecords).to.eq(3);
+    expect(table.data).to.deep.eq([
+      {
+        created: '10-04-2021 13:40:17',
+        account_id: 'UA-11876-3',
+        account_holder: 'Terrell E. Evert',
+        balance: '$33',
+      },
+      {
+        created: '10-04-2021 12:00:17',
+        account_id: 'UA-10876-1',
+        account_holder: 'James L. Silver',
+        balance: '$50.5',
+      },
+      {
+        created: '10-04-2021 13:00:17',
+        account_id: 'UA-10346-1',
+        account_holder: 'Christian A. Lavalle',
+        balance: '-22.98',
+      },
+    ]);
+  });
+```
 
 ## Example - Web scraping records
 
 This plugin also allows for scraping of data from tables which can be persisted to a json file:
+
+```
+cy.get('#example')
+  .scrapeTable({
+    exportFileName: 'scrapedData.json',
+    exportFilePath: 'cypress/downloads',
+  })
+  .then((table) => {
+    expect(table.info).to.contain('Data table successfully saved');
+  });
+```
+A json representation of the html table is then saved to a json file within the `cypress/downloads` folder:
 
 
 
