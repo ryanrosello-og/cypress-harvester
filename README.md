@@ -1,6 +1,6 @@
 # cypress-harvester
 
-A life enhancing plug-in for Cypress allowing you to easliy work with html tables, whether it be for testing or for web scarping purposes. 
+A life enhancing plug-in for Cypress allowing you to easliy work with html `<table>`, whether it be for testing or for web scarping purposes. 
 
 ## Installing
 
