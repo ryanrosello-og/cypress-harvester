@@ -9,12 +9,13 @@ context('Harvester', () => {
     cy.get('#example')
       .scrapeTable()
       .then((table) => {
-        const expectedAccountHolder = {
+        const expectedAccountHolder = Cypress._.find(table.data, {
           account_holder: 'Christian A. Lavalle',
-        };
-        expect(
-          Cypress._.find(table.data, expectedAccountHolder)
-        ).to.be.truthy();
+        });
+        expect(expectedAccountHolder).to.have.property(
+          'account_id',
+          'UA-10346-1'
+        );
       });
   });
 
@@ -22,10 +23,10 @@ context('Harvester', () => {
     cy.get('#example')
       .scrapeTable()
       .then((table) => {
-        const nonExistentAccountHolder = { account_holder: 'John Babs' };
-        expect(
-          Cypress._.find(table.data, nonExistentAccountHolder)
-        ).to.be.falsy();
+        const nonExistentAccountHolder = Cypress._.find(table.data, {
+          account_holder: 'John Babs',
+        });
+        expect(nonExistentAccountHolder).to.be.undefined;
       });
   });
 
@@ -33,12 +34,12 @@ context('Harvester', () => {
     cy.get('#example')
       .scrapeTable()
       .then((table) => {
-        var expectedTableSort = _.orderBy(
+        var expectedTableSort = Cypress._.orderBy(
           table.data,
-          ['account_holder'],
+          ['account_id'],
           ['desc']
         );
-        expect(table.data).to.deep.eq([expectedTableSort]);
+        expect(table.data).to.deep.eq(expectedTableSort);
       });
   });
 
@@ -47,7 +48,8 @@ context('Harvester', () => {
       .scrapeTable({ decimalColumns: [3] })
       .then((table) => {
         const balance = table.data.map((c) => c.balance);
-        expect(Cypress._.sum(balance)).to.eq(60.52);
+        const expecteSum = Cypress._.sum(balance);
+        expect(Cypress._.round(expecteSum, 2)).to.eq(60.52);
       });
   });
 
@@ -55,17 +57,9 @@ context('Harvester', () => {
     cy.get('#example')
       .scrapeTable()
       .then((table) => {
-        cy.fixture('expected_table_values').then(expectedTableData => {
-          expect(expectedTableData).to.deep.eq(table.data);
+        cy.fixture('expected_table_values').then((expectedTableData) => {
+          expect(table.data).to.deep.eq(expectedTableData);
         });
-      });
-  });
-
-  it('dealing with dynamic data', () => {
-    cy.get('#example')
-      .scrapeTable()
-      .then((table) => {
-        cy.log(table);
       });
   });
 });
