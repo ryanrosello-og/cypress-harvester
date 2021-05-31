@@ -10,7 +10,6 @@ Using npm:
 $ npm install cypress-harvester --save-dev
 ```
 
-`cypress-harvester` makes use of the Cypress `cy` command.
 Enable this plugin by adding this line to your project's `cypress/support/commands.js`:
 
 ```javascript
@@ -111,28 +110,32 @@ A json representation of the html table is then saved to a json file within the 
 cy.get('#example')
   .scrapeTable()
   .then((table) => {
-    expect(table.rowCount(), 'correct number of rows').to.eq(3);
+    // assert the number of records in the table
+    expect(table.rowCount()).to.eq(3);
+
+    // validate a record exists in the table
     expect(
       table.hasItem({
         account_holder: 'Christian A. Lavalle',
-      }),
-      'valid account exist'
+      })
     ).to.have.property('account_id', 'UA-10346-1');
 
+    // validate a record does not exist in the table
     expect(
       table.hasItem({
         account_holder: 'John Babs',
-      }),
-      'non-existent account holder should not be present'
+      })
     ).to.be.undefined;
 
-    expect(table.columnLabels, 'correct column labels shown').to.deep.eq([
+    // check the tables' column labels
+    expect(table.columnLabels).to.deep.eq([
       'Created',
       'Account Id',
       'Account Holder',
       'Balance',
     ]);
 
+    // test whether column(s) are sorted
     expect(
       table.isPropertySorted(['account_id'], ['desc']),
       'account_id sorted in desc order'
@@ -142,6 +145,7 @@ cy.get('#example')
 
 ## Use fixture as baseline
 
+Take advantage to the fixtures within Cypress when dealing with large datasets.
 ```
 cy.get('#example')
   .scrapeTable()
@@ -154,6 +158,7 @@ cy.get('#example')
 
 ## Infer data types and aggregate columns
 
+Provide the index of numeric columns (starting at zero), in the example above. The balance column index is 3, when this value is supplied to the plug-in, we are able to validate the total sum of the column against an expected value.
 ```
 cy.get('#example')
   .scrapeTable({ decimalColumns: [3] })

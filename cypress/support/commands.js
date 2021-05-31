@@ -46,27 +46,17 @@ Cypress.Commands.add(
   },
   (subject, options) => {
     const conf = { ...defaultConfig(), ...options };
-    let scrapped = [];
+    let dataTable = new DataTable();
     let propertyNames = [];
     let columnLabels = [];
+
     const tableElement = subject[0];
-    var trows = tableElement.rows;
-
-    let dataTable = {
-      data: scrapped,
-      propertyNames: propertyNames,
-      columnLabels: columnLabels,
-      numberOfRecords: scrapped.length,
-      info: '',
-    };
-
-    let d = new DataTable();
-
     if (!isTableElement(tableElement)) {
       dataTable.info = '!!! The element encountered was not a <table>';
       return dataTable;
     }
 
+    var trows = tableElement.rows;
     Cypress.$.each(trows, (rowIndex, row) => {
       let o = new Object();
       let mergeCellOffest = 0;
@@ -107,8 +97,7 @@ Cypress.Commands.add(
       });
 
       if (rowIndex !== conf.rowIndexForHeadings) {
-        scrapped.push(o);
-        d.addItem(o);
+        dataTable.addItem(o);
       }
     });
 
@@ -119,32 +108,23 @@ Cypress.Commands.add(
       consoleProps: () => {
         return {
           tableElement,
-          options,
+          conf,
           dataTable,
         };
       },
     });
 
-    dataTable.data = scrapped;
-    dataTable.propertyNames = propertyNames;
-    dataTable.columnLabels = columnLabels;
-    dataTable.numberOfRecords = scrapped.length;
-    dataTable.info = moreThanOneTable(subject);
-
     // save to file?
     if (conf.exportFilePath && conf.exportFileName) {
-      dataTable.info = `${dataTable.info}\n ${exportTable(
-        conf,
-        dataTable.data
-      )}`;
-      d.flagAsExported(
-        `${dataTable.info}\n ${exportTable(conf, dataTable.data)}`
+      dataTable.flagAsExported(
+        `${dataTable.info}\n ${exportTable(conf, dataTable)}`
       );
     }
-    // return cy.wrap(dataTable);
-    d.columnLabels = columnLabels;
-    d.propertyNames = propertyNames;
-    return cy.wrap(d);
+
+    dataTable.info = moreThanOneTable(subject);
+    dataTable.columnLabels = columnLabels;
+    dataTable.propertyNames = propertyNames;
+    return cy.wrap(dataTable);
   }
 );
 
