@@ -25,6 +25,7 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 var path = require('path');
 import DataTable from '../support/data-table';
+import { getTableMatrix } from '../support/table-slots';
 
 const defaultConfig = () => {
   return {
@@ -38,6 +39,61 @@ const defaultConfig = () => {
     decimalColumns: [],
   };
 };
+
+Cypress.Commands.add(
+  'scrapeTable2',
+  {
+    prevSubject: true,
+  },
+  (subject, options) => {
+    const conf = { ...defaultConfig(), ...options };
+
+    let propertyNames = [];
+    const tableElement = subject[0];
+    const tableMatrix = getTableMatrix(tableElement);
+    const columnHeaderIndex = 0;
+    const columnHeaders = tableMatrix[columnHeaderIndex].map(
+      (cell) => cell.textContent
+    );
+
+    // TODO : iterate from columnHeaderIndex
+
+    cy.log('header', columnHeaders);
+    columnHeaders.forEach((column, cellIndex) => {
+      const columName = extractColumnName(
+        column,
+        conf.propertyNameConvention,
+        cellIndex
+      );
+
+      propertyNames[cellIndex] = propertyNames.includes(columName)
+        ? `${columName}_${cellIndex}`
+        : columName;
+    });
+    cy.log('propertyNames', propertyNames);
+
+    // figure out o
+    // dataTable.addItem(o);
+    cy.log(`[
+      ${tableMatrix
+        .map((row) => {
+          return JSON.stringify(row.map((cell) => cell.textContent.padEnd(5)));
+        })
+        .join(',\n  ')}
+    ]`);
+    // var trows = tableElement.rows;
+    // Cypress.$.each(trows, (rowIndex, row) => {
+    //   cy.log(':: Next row ::');
+    //   Cypress.$.each(row.cells, (cellIndex, cell) => {
+    //     if (cell.hasAttribute('rowspan')) {
+    //       cy.log(`[${rowIndex},${cellIndex}] = ${cell.textContent}*`);
+    //     } else {
+    //       cy.log(`[${rowIndex},${cellIndex}] = ${cell.textContent}`);
+    //     }
+    //   });
+    // });
+  }
+);
 
 Cypress.Commands.add(
   'scrapeTable',
@@ -81,11 +137,13 @@ Cypress.Commands.add(
           // if merged cell
           if (cell.hasAttribute('colspan')) {
             let numCellSpan = parseInt(cell.getAttribute('colspan'));
+            debugger;
             for (let i = 0; i < numCellSpan; i++) {
               o[propertyNames[cellIndex + mergeCellOffest + i]] =
                 applyDataConversion(conf.decimalColumns, i, cellValue);
             }
             mergeCellOffest = mergeCellOffest + (numCellSpan - 1);
+            debugger;
           } else {
             o[propertyNames[cellIndex + mergeCellOffest]] = applyDataConversion(
               conf.decimalColumns,
