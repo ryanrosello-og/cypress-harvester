@@ -1,6 +1,6 @@
 # cypress-harvester
-https://github.com/ryanrosello-og/cypress-harvester/actions/workflows/main.yml/badge.svg
 
+![Biulds](https://github.com/ryanrosello-og/cypress-harvester/actions/workflows/main.yml/badge.svg)
 
     https://github.com/ryanrosello-og/cypress-harvester/runs/2721818259?check_suite_focus=true
 
