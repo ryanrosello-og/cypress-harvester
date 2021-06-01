@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-context('Harvester', () => {
+context('Various examples', () => {
   beforeEach(() => {
     cy.visit('./cypress/fixtures/example.html');
   });
@@ -55,7 +55,7 @@ context('Harvester', () => {
   });
 
   // deeply assert the data in the table
-  it('very simple example', () => {
+  it('deeply assert the data in the table', () => {
     cy.get('#example')
       .scrapeTable()
       .then((table) => {
