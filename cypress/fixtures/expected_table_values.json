@@ -1,0 +1,20 @@
+[
+  {
+    "created": "10-04-2021 13:40:17",
+    "account_id": "UA-11876-3",
+    "account_holder": "Terrell E. Evert",
+    "balance": "$33"
+  },
+  {
+    "created": "10-04-2021 12:00:17",
+    "account_id": "UA-10876-1",
+    "account_holder": "James L. Silver",
+    "balance": "$50.5"
+  },
+  {
+    "created": "10-04-2021 13:00:17",
+    "account_id": "UA-10346-1",
+    "account_holder": "Christian A. Lavalle",
+    "balance": "$-22.98"
+  }
+]
