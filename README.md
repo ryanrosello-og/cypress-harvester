@@ -1,4 +1,8 @@
 # cypress-harvester
+https://github.com/ryanrosello-og/cypress-harvester/actions/workflows/main.yml/badge.svg
+
+
+    https://github.com/ryanrosello-og/cypress-harvester/runs/2721818259?check_suite_focus=true
 
 A life enhancing plug-in for Cypress allowing you to easliy work with html `<table>`, whether it be for testing or for web scarping purposes. 
 
