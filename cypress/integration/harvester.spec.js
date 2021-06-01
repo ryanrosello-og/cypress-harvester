@@ -162,7 +162,7 @@ context('Harvester', () => {
       });
   });
 
-  it('handles merged cells', () => {
+  it('handles merged cells [colspan]', () => {
     cy.get('#mergedCells')
       .scrapeTable()
       .then((table) => {
@@ -187,6 +187,39 @@ context('Harvester', () => {
             last_name: 'Russell Hobbs',
             gender: 'Male',
             age: 'Male',
+          },
+        ]);
+      });
+  });
+
+  it('handles merged cells [rowspan]', () => {
+    cy.get('#rowcolspan')
+      .scrapeTable()
+      .then((table) => {
+        expect(table.getData()).to.deep.eq([
+          {
+            column_name_0: 'Favorite',
+            column_name_1: 'Color',
+            bob: 'Blue',
+            alice: 'Purple',
+          },
+          {
+            column_name_0: 'Favorite',
+            column_name_1: 'Flavor',
+            bob: 'Banana',
+            alice: 'Chocolate',
+          },
+          {
+            column_name_0: 'Least Favorite',
+            column_name_1: 'Color',
+            bob: 'Yellow',
+            alice: 'Pink',
+          },
+          {
+            column_name_0: 'Least Favorite',
+            column_name_1: 'Flavor',
+            bob: 'Mint',
+            alice: 'Walnut',
           },
         ]);
       });

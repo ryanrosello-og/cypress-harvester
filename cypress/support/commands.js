@@ -41,61 +41,6 @@ const defaultConfig = () => {
 };
 
 Cypress.Commands.add(
-  'scrapeTable2',
-  {
-    prevSubject: true,
-  },
-  (subject, options) => {
-    const conf = { ...defaultConfig(), ...options };
-
-    let propertyNames = [];
-    const tableElement = subject[0];
-    const tableMatrix = getTableMatrix(tableElement);
-    const columnHeaderIndex = 0;
-    const columnHeaders = tableMatrix[columnHeaderIndex].map(
-      (cell) => cell.textContent
-    );
-
-    // TODO : iterate from columnHeaderIndex
-
-    cy.log('header', columnHeaders);
-    columnHeaders.forEach((column, cellIndex) => {
-      const columName = extractColumnName(
-        column,
-        conf.propertyNameConvention,
-        cellIndex
-      );
-
-      propertyNames[cellIndex] = propertyNames.includes(columName)
-        ? `${columName}_${cellIndex}`
-        : columName;
-    });
-    cy.log('propertyNames', propertyNames);
-
-    // figure out o
-    // dataTable.addItem(o);
-    cy.log(`[
-      ${tableMatrix
-        .map((row) => {
-          return JSON.stringify(row.map((cell) => cell.textContent.padEnd(5)));
-        })
-        .join(',\n  ')}
-    ]`);
-    // var trows = tableElement.rows;
-    // Cypress.$.each(trows, (rowIndex, row) => {
-    //   cy.log(':: Next row ::');
-    //   Cypress.$.each(row.cells, (cellIndex, cell) => {
-    //     if (cell.hasAttribute('rowspan')) {
-    //       cy.log(`[${rowIndex},${cellIndex}] = ${cell.textContent}*`);
-    //     } else {
-    //       cy.log(`[${rowIndex},${cellIndex}] = ${cell.textContent}`);
-    //     }
-    //   });
-    // });
-  }
-);
-
-Cypress.Commands.add(
   'scrapeTable',
   {
     prevSubject: true,
@@ -103,61 +48,37 @@ Cypress.Commands.add(
   (subject, options) => {
     const conf = { ...defaultConfig(), ...options };
     let dataTable = new DataTable();
-    let propertyNames = [];
-    let columnLabels = [];
-
     const tableElement = subject[0];
+
     if (!isTableElement(tableElement)) {
       dataTable.info = '!!! The element encountered was not a <table>';
       return dataTable;
     }
 
-    var trows = tableElement.rows;
-    Cypress.$.each(trows, (rowIndex, row) => {
+    const tableMatrix = getTableMatrix(tableElement);
+    if (tableMatrix.length === 0) {
+      return dataTable;
+    }
+
+    const columnHeaders = tableMatrix[conf.rowIndexForHeadings].map(
+      (cell) => cell.textContent
+    );
+    let propertyNames = columnNameAsProperty(conf, columnHeaders);
+
+    for (let i = conf.rowIndexForHeadings + 1; i < tableMatrix.length; i++) {
       let o = new Object();
-      let mergeCellOffest = 0;
-
-      Cypress.$.each(row.cells, (cellIndex, cell) => {
-        if (rowIndex == conf.rowIndexForHeadings) {
-          columnLabels[cellIndex] = cell.textContent; // unmodified column labels
-          // extract column headings
-          const columName = extractColumnName(
-            cell.textContent,
-            conf.propertyNameConvention,
-            cellIndex
-          );
-
-          propertyNames[cellIndex] = propertyNames.includes(columName)
-            ? `${columName}_${cellIndex}`
-            : columName;
-        } else {
-          let cellValue = conf.removeAllNewlineCharacters
-            ? removeAllNewlineChars(cell.textContent)
-            : cell.textContent;
-          // if merged cell
-          if (cell.hasAttribute('colspan')) {
-            let numCellSpan = parseInt(cell.getAttribute('colspan'));
-            debugger;
-            for (let i = 0; i < numCellSpan; i++) {
-              o[propertyNames[cellIndex + mergeCellOffest + i]] =
-                applyDataConversion(conf.decimalColumns, i, cellValue);
-            }
-            mergeCellOffest = mergeCellOffest + (numCellSpan - 1);
-            debugger;
-          } else {
-            o[propertyNames[cellIndex + mergeCellOffest]] = applyDataConversion(
-              conf.decimalColumns,
-              cellIndex,
-              cellValue
-            );
-          }
-        }
+      tableMatrix[i].forEach((cell, index) => {
+        let cellValue = conf.removeAllNewlineCharacters
+          ? removeAllNewlineChars(cell.textContent)
+          : cell.textContent;
+        o[propertyNames[index]] = applyDataConversion(
+          conf.decimalColumns,
+          index,
+          cellValue
+        );
       });
-
-      if (rowIndex !== conf.rowIndexForHeadings) {
-        dataTable.addItem(o);
-      }
-    });
+      dataTable.addItem(o);
+    }
 
     Cypress.log({
       name: 'scrapeTable',
@@ -180,12 +101,34 @@ Cypress.Commands.add(
     }
 
     dataTable.info = moreThanOneTable(subject);
-    dataTable.columnLabels = columnLabels;
+    dataTable.columnLabels = columnHeaders;
     dataTable.propertyNames = propertyNames;
     return cy.wrap(dataTable);
   }
 );
 
+const columnNameAsProperty = (conf, columnHeaders) => {
+  let propertyNames = [];
+  columnHeaders.forEach((column, cellIndex) => {
+    const columName = extractColumnName(
+      column,
+      conf.propertyNameConvention,
+      cellIndex
+    );
+
+    propertyNames[cellIndex] = propertyNames.includes(columName)
+      ? `${columName}_${cellIndex}`
+      : columName;
+  });
+  return propertyNames;
+};
+
+/**
+ * Saves json object to a file using cy.writefile
+ * @param {object} config - configuration contain options for the export
+ * @param {Array} jsonData - data for export
+ * @returns message where the exported file is saved into
+ */
 const exportTable = (config, jsonData) => {
   let fileName = config.exportFileName;
   if (config.includeTimestamp) {

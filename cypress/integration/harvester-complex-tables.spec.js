@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-context('Harvester', () => {
+context.skip('Harvester', () => {
   beforeEach(() => {
     // cy.visit('./cypress/fixtures/test_tables.html');
     cy.visit('./cypress/fixtures/complex_wonky_table.html');
