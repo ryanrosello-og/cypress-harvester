@@ -30,7 +30,7 @@ Given a simple html table below:
 | 10-04-2021 13:00:17 | UA-10346-1 | Christian A. Lavalle | $-22.98 |
 
 
-```
+```html
 <table id="example" border="1">
 <tr>
     <td>Created</td>
@@ -62,7 +62,7 @@ Given a simple html table below:
 
 When table is passed through the Cypress harvester, Cypress is able to easily extract data and convert to a json representation of the table:
 
-```
+```javascript
 cy.get('#example')
   .scrapeTable()
   .then((table) => {
@@ -88,19 +88,12 @@ cy.get('#example')
     ]);
   });
 ```
-#![Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
-#![Alt Text](https://media.giphy.com/media/EdkRsK9ioZNrq/giphy.gif)
-#<details>
-#  <summary>That's awesome</summary>
-#    ![Alt Text](https://media.giphy.com/media/EdkRsK9ioZNrq/giphy.gif)
-#
-#</details>
 
 ## Example - Web scraping records
 
 This plugin also allows for scraping of data from tables which can be persisted to a json file:
 
-```
+```javascript
 cy.get('#example')
   .scrapeTable({
     exportFileName: 'scrapedData.json',
@@ -116,7 +109,7 @@ A json representation of the html table is then saved to a json file within the 
 
 ## Other Useful assertions
 
-```
+```javascript
 cy.get('#example')
   .scrapeTable()
   .then((table) => {
@@ -200,7 +193,7 @@ cy.get('#example')
 ## Use fixture as baseline
 
 Take advantage to the fixtures within Cypress when dealing with large datasets.
-```
+```javascript
 cy.get('#example')
   .scrapeTable()
   .then((table) => {
@@ -213,7 +206,7 @@ cy.get('#example')
 ## Infer data types and aggregate columns
 
 Provide the index of numeric columns (starting at zero), in the example above. The balance column index is 3, when this value is supplied to the plug-in, we are able to validate the total sum of the column against an expected value.
-```
+```javascript
 cy.get('#example')
   .scrapeTable({ decimalColumns: [3] })
   .then((table) => {
