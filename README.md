@@ -2,8 +2,6 @@
 
 ![Biulds](https://github.com/ryanrosello-og/cypress-harvester/actions/workflows/main.yml/badge.svg)
 
-    https://github.com/ryanrosello-og/cypress-harvester/runs/2721818259?check_suite_focus=true
-
 A life enhancing plug-in for Cypress allowing you to easliy work with html `<table>`, whether it be for testing or for web scarping purposes. 
 
 ## Installing
@@ -239,26 +237,11 @@ This treated as
 
 <screenshot of console output>
 
-
-TODO :-
-
-
-[] rowspan - rowspan + colspan combo
-[] update doco
-[] create npm package
-[] pair of repeating elements
-✅ as chain command
-✅ handle duplicate columns
-✅ merged cells
-✅ infer integers
-✅ conf.appendTimestamp
-✅ handle duplicate webtables
-[] config:
-    ✅ jsonify column headings
-    ✅ remove new line char from heading
     
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+## License
+
+[MIT][mit]
+
+[cypress]: https://cypress.io
+[mit]: https://opensource.org/licenses/MIT
+[npm]: https://www.npmjs.com/
