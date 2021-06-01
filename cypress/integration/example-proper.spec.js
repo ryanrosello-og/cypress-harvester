@@ -35,6 +35,22 @@ context('Harvester', () => {
           table.isPropertySorted(['account_id'], ['desc']),
           'account_id sorted in desc order'
         ).to.be.true;
+
+        // find records matching a search term for a given property
+        expect(table.containsItem('account_holder', 'ver')).to.deep.eq([
+          {
+            created: '10-04-2021 13:40:17',
+            account_id: 'UA-11876-3',
+            account_holder: 'Terrell E. Evert',
+            balance: '$33',
+          },
+          {
+            created: '10-04-2021 12:00:17',
+            account_id: 'UA-10876-1',
+            account_holder: 'James L. Silver',
+            balance: '$50.5',
+          },
+        ]);
       });
   });
 
@@ -60,6 +76,34 @@ context('Harvester', () => {
             created: '10-04-2021 13:00:17',
             account_id: 'UA-10346-1',
             account_holder: 'Christian A. Lavalle',
+            balance: '$-22.98',
+          },
+        ]);
+      });
+  });
+
+  // choose to only return certain properties you wish to validate against
+  it('choose to only return certain properties you wish to validate against', () => {
+    cy.get('#example')
+      .scrapeTable()
+      .then((table) => {
+        let mappedProperties = table.getData().map((d) => {
+          return {
+            account_id: d.account_id,
+            balance: d.balance,
+          };
+        });
+        expect(mappedProperties).to.deep.eq([
+          {
+            account_id: 'UA-11876-3',
+            balance: '$33',
+          },
+          {
+            account_id: 'UA-10876-1',
+            balance: '$50.5',
+          },
+          {
+            account_id: 'UA-10346-1',
             balance: '$-22.98',
           },
         ]);

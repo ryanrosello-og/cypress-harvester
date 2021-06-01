@@ -22,6 +22,12 @@ export default class DataTable {
     return Cypress._.find(this.data, item);
   }
 
+  containsItem(property, searchTerm) {
+    return Cypress._.filter(this.data, (i) => {
+      return i[property].includes(searchTerm);
+    });
+  }
+
   flagAsExported(downloadPath) {
     this.exportStatus = downloadPath;
   }

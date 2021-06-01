@@ -140,6 +140,50 @@ cy.get('#example')
       table.isPropertySorted(['account_id'], ['desc']),
       'account_id sorted in desc order'
     ).to.be.true;
+
+    // find records matching a search term for a given property
+    // the example below return only 2 records where the account holder contains 'ver'
+    // it will find [Terrell E. Evert and James L. Silver]
+    expect(
+      table.containsItem(
+        'account_holder', 'ver')
+    ).to.deep.eq([
+      {
+        created: '10-04-2021 13:40:17',
+        account_id: 'UA-11876-3',
+        account_holder: 'Terrell E. Evert',
+        balance: '$33',
+      },
+      {
+        created: '10-04-2021 12:00:17',
+        account_id: 'UA-10876-1',
+        account_holder: 'James L. Silver',
+        balance: '$50.5',
+      }
+    ]);
+  
+    // choose to only return certain properties you wish to validate against
+    let mappedProperties = table.getData().map((d) => {
+      return {
+        account_id: d.account_id,
+        balance: d.balance,
+      };
+    });
+
+    expect(mappedProperties).to.deep.eq([
+      {
+        account_id: 'UA-11876-3',
+        balance: '$33',
+      },
+      {
+        account_id: 'UA-10876-1',
+        balance: '$50.5',
+      },
+      {
+        account_id: 'UA-10346-1',
+        balance: '$-22.98',
+      },
+    ]);   
   });
 ```
 
@@ -180,25 +224,16 @@ cy.get('#example')
 | applyDataTypeConversion    | false         | boolean | Converts the column values to integers for the columns specified in the [decimalColumns] property.     |
 | decimalColumns             | []            | array   | This configuration is applied only when the applyDataTypeConversion flag is set to true.  Expects an array of intergers, these numbers map to the column index (starting at zero) of each of columns in the table.  The values contained in the columns will be converted to integers.    |
 
-
-## More advanced examples
-
-* Table contains a specific record
-* Sorting
-* Aggregate column
-* Large dataset via fixture
-* Large dataset using snapshot
-
 ## Merge cells
 
-Merges cells are normalized to...
+When the scraper encounters merge cells, whether it be (colspan or rowspan attributes).  It will normalize cell values such that the colspan are filled across columns from left to right, rowspans are filled down.
 
-In the example beolow:
+In the example table below:
 
 
 This treated as 
 
-
+<screenshot of console output>
 
 
 TODO :-
