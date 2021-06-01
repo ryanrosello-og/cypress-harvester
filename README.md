@@ -1,8 +1,9 @@
 # cypress-harvester
 
 ![Biulds](https://github.com/ryanrosello-og/cypress-harvester/actions/workflows/main.yml/badge.svg)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ryanrosello-og/cypress-harvester/blob/master/LICENSE)
 
-A life enhancing plug-in for Cypress allowing you to easliy work with html `<table>`, whether it be for testing or for web scarping purposes. 
+A life enhancing plug-in for Cypress allowing you to easliy work with html `<table>`elements, whether it be for test assertions or for web scarping purposes. 
 
 ## Installing
 
@@ -87,6 +88,13 @@ cy.get('#example')
     ]);
   });
 ```
+#![Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
+#![Alt Text](https://media.giphy.com/media/EdkRsK9ioZNrq/giphy.gif)
+#<details>
+#  <summary>That's awesome</summary>
+#    ![Alt Text](https://media.giphy.com/media/EdkRsK9ioZNrq/giphy.gif)
+#
+#</details>
 
 ## Example - Web scraping records
 
@@ -237,6 +245,15 @@ This treated as
 
 <screenshot of console output>
 
+    
+## Contributions
+
+Contributionsare more than welcome. Go nuts.    
+    
+## Credits
+
+Solution in this [stackoverflow question](https://stackoverflow.com/questions/64017962/read-html-table-with-merged-cells-row-for-row-or-column-for-column)
+[@metarmask](https://stackoverflow.com/users/4245061/metarmask)
     
 ## License
 
