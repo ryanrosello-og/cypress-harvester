@@ -1,4 +1,4 @@
-# cypress-harvester
+# 🚜cypress-harvester
 
 ![Biulds](https://github.com/ryanrosello-og/cypress-harvester/actions/workflows/main.yml/badge.svg)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ryanrosello-og/cypress-harvester/blob/master/LICENSE)
@@ -32,30 +32,30 @@ Given a simple html table below:
 
 ```html
 <table id="example" border="1">
-<tr>
-    <td>Created</td>
-    <td>Account Id</td>
-    <td>Account Holder</td>
-    <td>Balance</td>
-</tr>
-<tr>
-    <td>10-04-2021 13:40:17</td>
-    <td>UA-11876-3</td>
-    <td>Terrell E. Evert</td>
-    <td>$33</td>
-</tr>    
-<tr>
-    <td>10-04-2021 12:00:17</td>
-    <td>UA-10876-1</td>
-    <td>James L. Silver</td>
-    <td>$50.5</td>
-</tr>
-<tr>
-    <td>10-04-2021 13:00:17</td>
-    <td>UA-10346-1</td>
-    <td>Christian A. Lavalle</td>
-    <td>$-22.98</td>
-</tr>
+  <tr>
+      <td>Created</td>
+      <td>Account Id</td>
+      <td>Account Holder</td>
+      <td>Balance</td>
+  </tr>
+  <tr>
+      <td>10-04-2021 13:40:17</td>
+      <td>UA-11876-3</td>
+      <td>Terrell E. Evert</td>
+      <td>$33</td>
+  </tr>    
+  <tr>
+      <td>10-04-2021 12:00:17</td>
+      <td>UA-10876-1</td>
+      <td>James L. Silver</td>
+      <td>$50.5</td>
+  </tr>
+  <tr>
+      <td>10-04-2021 13:00:17</td>
+      <td>UA-10346-1</td>
+      <td>Christian A. Lavalle</td>
+      <td>$-22.98</td>
+  </tr>
 </table>
 ```
 
@@ -226,17 +226,6 @@ cy.get('#example')
 | removeAllNewlineCharacters | false         | boolean | Instructs the plugin to remove all new line characters from the table cell values    |
 | applyDataTypeConversion    | false         | boolean | Converts the column values to integers for the columns specified in the [decimalColumns] property.     |
 | decimalColumns             | []            | array   | This configuration is applied only when the applyDataTypeConversion flag is set to true.  Expects an array of intergers, these numbers map to the column index (starting at zero) of each of columns in the table.  The values contained in the columns will be converted to integers.    |
-
-## Merge cells
-
-When the scraper encounters merge cells, whether it be (colspan or rowspan attributes).  It will normalize cell values such that the colspan are filled across columns from left to right, rowspans are filled down.
-
-In the example table below:
-
-
-This treated as 
-
-<screenshot of console output>
 
     
 ## Contributions
