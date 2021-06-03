@@ -1,6 +1,6 @@
 {
   "name": "cypress-harvester",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Extracts repeating elements from the DOM onto a more friendly json format",
   "main": "cypress/support/commands.js",
   "scripts": {
@@ -23,14 +23,14 @@
     "url": "https://github.com/ryanrosello-og/cypress-harvester/issues"
   },
   "homepage": "https://github.com/ryanrosello-og/cypress-harvester#readme",
-  "dependencies": {
-    "cypress": "^7.3.0",
-    "prettier": "^2.3.0"
-  },
+  "dependencies": {},
   "prettier": {
     "singleQuote": true,
     "tabWidth": 2,
     "semi": true
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "cypress": "^7.4.0",
+    "prettier": "^2.3.0"
+  }
 }
