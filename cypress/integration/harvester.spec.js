@@ -42,6 +42,92 @@ context('Harvester', () => {
       });
   });
 
+  it('determines if a property is sorted asc', () => {
+    cy.get('#simpleTable')
+      .scrapeTable()
+      .then((table) => {
+        expect(
+          table.isPropertySorted(['last_name'], ['asc']),
+          'last_name sorted in desc order'
+        ).to.be.false;
+      });
+  });
+
+  it('determines if a property is sorted desc', () => {
+    cy.get('#simpleTable')
+      .scrapeTable()
+      .then((table) => {
+        expect(
+          table.isPropertySorted(['last_name'], ['asc']),
+          'last_name sorted in asc order'
+        ).to.be.false;
+      });
+  });
+
+  it('determines if a property is sorted desc when dataset property is sorted asc', () => {
+    cy.get('#simpleTable')
+      .scrapeTable()
+      .then((table) => {
+        expect(
+          table.isPropertySorted(['gender'], ['asc']),
+          'gender sorted in asc order'
+        ).to.be.false;
+      });
+  });
+
+  it('determines if a property is sorted desc when dataset property is sorted desc', () => {
+    cy.get('#simpleTable')
+      .scrapeTable()
+      .then((table) => {
+        expect(
+          table.isPropertySorted(['gender'], ['desc']),
+          'gender sorted in desc order'
+        ).to.be.true;
+      });
+  });
+
+  it('handle sort assertion when an invalid property is supplied', () => {
+    cy.get('#simpleTable')
+      .scrapeTable()
+      .then((table) => {
+        let result = table.isPropertySorted(['non-existent_column'], ['desc']);
+        expect(result.message).to.eq(
+          'Unexpected columns names encountered [non-existent_column], expected columns name to be one of [first_name,last_name,gender,age]'
+        );
+      });
+  });
+
+  it('throw an error when no column names provided', () => {
+    cy.get('#simpleTable')
+      .scrapeTable()
+      .then((table) => {
+        let result = table.isPropertySorted();
+        expect(result.message).to.eq('No column names provided for assertion');
+      });
+  });
+
+  it('validates the sort order supplied exists', () => {
+    cy.get('#simpleTable')
+      .scrapeTable()
+      .then((table) => {
+        let result = table.isPropertySorted(['gender']);
+        expect(result.message).to.eq(
+          'Sort order is required, this value can either be "asc" or "desc"'
+        );
+      });
+  });
+
+  it('validates the sort order supplied is one of asc or desc', () => {
+    cy.get('#simpleTable')
+      .scrapeTable()
+      .then((table) => {
+        let result = table.isPropertySorted(['gender'], ['ascending  ']);
+        expect(result.message).to.eq(
+          'Sort order is required, this value can either be "asc" or "desc"'
+        );
+      });
+  });
+
   it('exposes table column names as [columnLabels]', () => {
     cy.get('#simpleTable')
       .scrapeTable()

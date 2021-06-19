@@ -33,6 +33,31 @@ export default class DataTable {
   }
 
   isPropertySorted(properties, sortOrders) {
+    if (!properties || properties.length === 0) {
+      return new Error('No column names provided for assertion');
+    }
+
+    if (
+      !sortOrders ||
+      sortOrders.length === 0 ||
+      !Cypress._.values(sortOrders).every(
+        (sort) => sort === 'asc' || sort === 'desc'
+      )
+    ) {
+      return new Error(
+        'Sort order is required, this value can either be "asc" or "desc"'
+      );
+    }
+
+    if (
+      properties.length !==
+      Cypress._.intersection(this.propertyNames, properties).length
+    ) {
+      return new Error(
+        `Unexpected columns names encountered [${properties}], expected columns name to be one of [${this.propertyNames}]`
+      );
+    }
+
     var expectedTableSort = Cypress._.orderBy(
       this.data,
       properties,
