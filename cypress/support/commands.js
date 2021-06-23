@@ -26,6 +26,7 @@
 var path = require('path');
 import DataTable from '../support/data-table';
 import { getTableMatrix } from '../support/table-slots';
+import './scrape-elements'
 
 const defaultConfig = () => {
   return {

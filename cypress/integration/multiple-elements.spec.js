@@ -7,8 +7,8 @@ context('Support for multiple elements', () => {
 
   it('simple table assertions', () => {
     cy.scrapeElements([
-      { element: 'article_name', locator: 'a[href*="encodedna"]' },
-      { element: 'article_name', locator: 'a[href*="encodedna"]' },
-    ]);
+      { label: 'title', locator: '.title' },
+      { label: 'location', locator: '.link' },
+    ]).then(cy.log)
   });
 });
