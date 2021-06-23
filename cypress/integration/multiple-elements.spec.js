@@ -9,6 +9,6 @@ context('Support for multiple elements', () => {
     cy.scrapeElements([
       { label: 'title', locator: '.title' },
       { label: 'location', locator: '.link' },
-    ]).then(cy.log)
+    ]).then(cy.log);
   });
 });

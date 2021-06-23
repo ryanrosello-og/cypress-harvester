@@ -1,24 +1,28 @@
 Cypress.Commands.add('scrapeElements', (elements) => {
-  let texts = []
+  let texts = [];
 
-  cy.get(elements[0].locator).its('length').then(numberOfIterations => {
-    for (let i = 0; i < numberOfIterations; i++) {
-      let o = {}
+  cy.get(elements[0].locator)
+    .its('length')
+    .then((numberOfIterations) => {
+      for (let i = 0; i < numberOfIterations; i++) {
+        let o = {};
 
-      elements.forEach((element, index) => {
-        cy.get(element.locator).then(e => {
-          o[element.label] = e[0].textContent
-        })
-      });
-      // cy.get(elements[0].locator).eq(i).then(e => {
-      //   o[elements[0].label] = e[0].textContent
-      // })
-      // cy.get(elements[1].locator).eq(i).then(e => {
-      //   o[elements[1].label] = e[0].textContent
-      // })
+        elements.forEach((element, index) => {
+          cy.get(element.locator).then((e) => {
+            o[element.label] = e[0].textContent;
+          });
+        });
 
-      texts.push(o)
-    }
-    return cy.wrap(texts)
-  })
-})
+        for (let k = 0; k < elements.length; k++) {
+          cy.get(elements[k].locator)
+            .eq(i)
+            .then((e) => {
+              o[elements[k].label] = e[0].textContent;
+            });
+        }
+
+        texts.push(o);
+      }
+      return cy.wrap(texts);
+    });
+});
