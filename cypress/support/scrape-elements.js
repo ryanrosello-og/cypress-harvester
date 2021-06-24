@@ -7,15 +7,9 @@ Cypress.Commands.add('scrapeElements', (elements) => {
       for (let i = 0; i < numberOfIterations; i++) {
         let o = {};
 
-        elements.forEach((element, index) => {
-          cy.get(element.locator).then((e) => {
-            o[element.label] = e[0].textContent;
-          });
-        });
-
         for (let k = 0; k < elements.length; k++) {
-          cy.get(elements[k].locator)
-            .eq(i)
+          cy.get(elements[k].locator, { log: false })
+            .eq(i, { log: false })
             .then((e) => {
               o[elements[k].label] = e[0].textContent;
             });
