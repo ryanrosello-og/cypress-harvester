@@ -42,7 +42,12 @@ const defaultConfig = () => {
 
 Cypress.Commands.add('scrapeElements', (elements) => {
   let dataTable = new DataTable();
-  dataTable.columnLabels = elements.map(e => e.label)
+  const suppressLogs = { log: false };
+  dataTable.columnLabels = elements.map((e) => e.label);
+  dataTable.propertyNames = elements.map((e) => e.label);
+
+  // TODO: find max Iterations
+
   cy.get(elements[0].locator)
     .its('length')
     .then((numberOfIterations) => {
@@ -50,18 +55,23 @@ Cypress.Commands.add('scrapeElements', (elements) => {
         let o = new Object();
 
         for (let k = 0; k < elements.length; k++) {
-          cy.get(elements[k].locator, { log: false })
-            .eq(i, { log: false })
-            .then((e) => {
-              o[elements[k].label] = e[0].textContent;
-            });
+          cy.get('body', suppressLogs).then(($body) => {
+            if ($body.find(elements[k].locator, suppressLogs)[i]) {
+              cy.get(elements[k].locator, suppressLogs)
+                .eq(i, suppressLogs)
+                .then((e) => {
+                  o[elements[k].label] = e[0].textContent;
+                });
+            } else {
+              o[elements[k].label] = '';
+            }
+          });
         }
         dataTable.addItem(o);
       }
       return cy.wrap(dataTable);
     });
 });
-
 
 Cypress.Commands.add(
   'scrapeTable',

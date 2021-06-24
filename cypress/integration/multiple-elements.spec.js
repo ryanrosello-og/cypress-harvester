@@ -1,33 +1,72 @@
 /// <reference types="cypress" />
 
 context('Support for multiple elements', () => {
-  it.only('simple table assertions', () => {
+  it('handles missing element', () => {
     cy.visit('./cypress/fixtures/multiple_elements.html');
 
     cy.scrapeElements([
-      { label: 'title', locator: '.title' },
-      { label: 'location', locator: '.link' },
-    ]).then(cy.log);
+      { label: 'title', locator: '#missing-element .title' },
+      { label: 'location', locator: '#missing-element .link' },
+    ]).then((scrapedData) => {
+
+      // TODO: index still getting messed up
+      expect(scrapedData.data).to.deep.eq([
+        {
+          title: 'Pineapple',
+          location: 'https://pineapple.com',
+        },
+        {
+          title: 'Apple'
+        },
+        {
+          title: 'pen',
+          location: 'https://pen.com'
+        },
+      ]);
+    });
   });
 
-  it('seabreeze elements', () => {
-    cy.visit(
-      'https://www.seabreeze.com.au/Classifieds/Search/Stand-Up-Paddle/Surfing-and-Cruising-Boards'
-    );
+  it('scrapes all element text when all elements exists', () => {
+    cy.visit('./cypress/fixtures/multiple_elements.html');
 
     cy.scrapeElements([
-      { label: 'heading', locator: '.hidden-xs h1.clsListHead' },
-      { label: 'blurb', locator: '.hidden-xs .clsListText' },
-    ]).then(cy.log);
+      { label: 'title', locator: '#all-elements-present .title' },
+      { label: 'location', locator: '#all-elements-present .link' },
+    ]).then((scrapedData) => {
+      expect(scrapedData.data).to.deep.eq([
+        {
+          title: 'Pineapple',
+          location: 'https://pineapple.com',
+        },
+        {
+          title: 'Apple',
+          location: 'https://apple.com',
+        },
+        {
+          title: 'pen',
+          location: 'https://pen.com',
+        },
+      ]);
+    });
   });
 
   it('scarpe single repeating element', () => {
-    cy.visit(
-      'https://www.seabreeze.com.au/Classifieds/Search/Stand-Up-Paddle/Surfing-and-Cruising-Boards'
-    );
+    cy.visit('./cypress/fixtures/multiple_elements.html');
 
     cy.scrapeElements([
-      { label: 'price', locator: '.hidden-xs .clsListPrice' },
-    ]).then(cy.log);
+      { label: 'title', locator: '#all-elements-present .title' },
+    ]).then((scrapedData) => {
+      expect(scrapedData.data).to.deep.eq([
+        {
+          title: 'Pineapple',
+        },
+        {
+          title: 'Apple',
+        },
+        {
+          title: 'pen',
+        },
+      ]);
+    });
   });
 });
