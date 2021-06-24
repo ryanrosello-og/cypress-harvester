@@ -26,7 +26,6 @@
 var path = require('path');
 import DataTable from '../support/data-table';
 import { getTableMatrix } from '../support/table-slots';
-import './scrape-elements';
 
 const defaultConfig = () => {
   return {
@@ -40,6 +39,29 @@ const defaultConfig = () => {
     decimalColumns: [],
   };
 };
+
+Cypress.Commands.add('scrapeElements', (elements) => {
+  let dataTable = new DataTable();
+  dataTable.columnLabels = elements.map(e => e.label)
+  cy.get(elements[0].locator)
+    .its('length')
+    .then((numberOfIterations) => {
+      for (let i = 0; i < numberOfIterations; i++) {
+        let o = new Object();
+
+        for (let k = 0; k < elements.length; k++) {
+          cy.get(elements[k].locator, { log: false })
+            .eq(i, { log: false })
+            .then((e) => {
+              o[elements[k].label] = e[0].textContent;
+            });
+        }
+        dataTable.addItem(o);
+      }
+      return cy.wrap(dataTable);
+    });
+});
+
 
 Cypress.Commands.add(
   'scrapeTable',

@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 context('Support for multiple elements', () => {
-  it('simple table assertions', () => {
+  it.only('simple table assertions', () => {
     cy.visit('./cypress/fixtures/multiple_elements.html');
 
     cy.scrapeElements([
@@ -10,7 +10,7 @@ context('Support for multiple elements', () => {
     ]).then(cy.log);
   });
 
-  it.only('seabreeze elements', () => {
+  it('seabreeze elements', () => {
     cy.visit(
       'https://www.seabreeze.com.au/Classifieds/Search/Stand-Up-Paddle/Surfing-and-Cruising-Boards'
     );
