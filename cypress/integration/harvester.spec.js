@@ -44,6 +44,7 @@ context('Harvester', () => {
 
   it('determines if a property is sorted asc', () => {
     cy.get('#simpleTable')
+      .should('have.length.above', 0)
       .scrapeTable()
       .then((table) => {
         expect(
@@ -93,6 +94,20 @@ context('Harvester', () => {
         let result = table.isPropertySorted(['non-existent_column'], ['desc']);
         expect(result.message).to.eq(
           'Unexpected columns names encountered [non-existent_column], expected columns name to be one of [first_name,last_name,gender,age]'
+        );
+      });
+  });
+
+  it('handle sort assertion when attempting to validate property sort against an empty table', () => {
+    cy.get('#onlyHeaders')
+      .scrapeTable()
+      .then((table) => {
+        let result = table.isPropertySorted(
+          ['first_name', 'age'],
+          ['asc', 'desc']
+        );
+        expect(result.message).to.eq(
+          'The table does not contain any data, please ensure that you have added sufficient guards to check whether rows of data has been loaded onto the table'
         );
       });
   });
