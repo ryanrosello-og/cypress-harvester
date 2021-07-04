@@ -1,72 +1,46 @@
 /// <reference types="cypress" />
 
 context('Support for multiple elements', () => {
-  it('handles missing element', () => {
+  it('handles multiple locators', () => {
     cy.visit('./cypress/fixtures/multiple_elements.html');
 
-    cy.scrapeElements([
-      { label: 'title', locator: '#missing-element .title' },
-      { label: 'location', locator: '#missing-element .link' },
-    ]).then((scrapedData) => {
-
-      // TODO: index still getting messed up
+    cy.scrapeElements({
+      elements: [
+        { label: 'title', locator: '.title' },
+        { label: 'location', locator: '.link' },
+      ],
+    }).then((scrapedData) => {
       expect(scrapedData.data).to.deep.eq([
         {
-          title: 'Pineapple',
-          location: 'https://pineapple.com',
+          title: ['Pineapple', 'Apple', 'pen', 'Pineapple', 'Apple', 'pen'],
         },
         {
-          title: 'Apple'
-        },
-        {
-          title: 'pen',
-          location: 'https://pen.com'
+          location: [
+            'https://pineapple.com',
+            'https://apple.com',
+            'https://pen.com',
+            'https://pineapple.com',
+            'https://pen.com',
+          ],
         },
       ]);
     });
   });
 
-  it('scrapes all element text when all elements exists', () => {
+  it('handles single locators', () => {
     cy.visit('./cypress/fixtures/multiple_elements.html');
 
-    cy.scrapeElements([
-      { label: 'title', locator: '#all-elements-present .title' },
-      { label: 'location', locator: '#all-elements-present .link' },
-    ]).then((scrapedData) => {
+    cy.scrapeElements({
+      elements: [
+        { label: 'title', locator: '.title' }
+      ],
+    }).then((scrapedData) => {
       expect(scrapedData.data).to.deep.eq([
         {
-          title: 'Pineapple',
-          location: 'https://pineapple.com',
-        },
-        {
-          title: 'Apple',
-          location: 'https://apple.com',
-        },
-        {
-          title: 'pen',
-          location: 'https://pen.com',
-        },
+          title: ['Pineapple', 'Apple', 'pen', 'Pineapple', 'Apple', 'pen'],
+        }
       ]);
     });
   });
 
-  it('scarpe single repeating element', () => {
-    cy.visit('./cypress/fixtures/multiple_elements.html');
-
-    cy.scrapeElements([
-      { label: 'title', locator: '#all-elements-present .title' },
-    ]).then((scrapedData) => {
-      expect(scrapedData.data).to.deep.eq([
-        {
-          title: 'Pineapple',
-        },
-        {
-          title: 'Apple',
-        },
-        {
-          title: 'pen',
-        },
-      ]);
-    });
-  });
 });

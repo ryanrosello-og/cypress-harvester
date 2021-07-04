@@ -40,12 +40,50 @@ const defaultConfig = () => {
   };
 };
 
-Cypress.Commands.add('scrapeElements', (elements) => {
+Cypress.Commands.add('scrapeElements', (repeater) => {
+  let dataTable = new DataTable();
+  const suppressLogs = { log: false };
+  dataTable.columnLabels = repeater.elements.map((e) => e.label);
+  dataTable.propertyNames = repeater.elements.map((e) => e.label);
+
+  for (let e = 0; e < repeater.elements.length; e++) {
+    let element = repeater.elements[e];
+    let textValues = [];
+    cy.get(element.locator)
+      .its('length')
+      .then((numberOfIterations) => {
+        for (let i = 0; i < numberOfIterations; i++) {
+          textValues.push(Cypress.$(element.locator)[i].textContent);
+        }
+      });
+    let o = new Object();
+    o[element.label] = textValues;
+    dataTable.addItem(o);
+  }
+  return cy.wrap(dataTable);
+});
+
+const checkIfEleExists = (ele) => {
+  return new Promise((resolve, reject) => {
+    cy.get('body')
+      .find(ele)
+      .its('length')
+      .then((res) => {
+        if (res > 0) {
+          resolve();
+        } else {
+          reject();
+        }
+      });
+  });
+};
+
+Cypress.Commands.add('zzscrapeElements', (elements) => {
   let dataTable = new DataTable();
   const suppressLogs = { log: false };
   dataTable.columnLabels = elements.map((e) => e.label);
   dataTable.propertyNames = elements.map((e) => e.label);
-  let matrix = []
+  let matrix = [];
 
   // TODO: find max Iterations
 
@@ -56,31 +94,34 @@ Cypress.Commands.add('scrapeElements', (elements) => {
         let o = new Object();
         // debugger
         for (let k = 0; k < elements.length; k++) {
-          cy.wrap({ row: i, col: k }).then(position => {
-
+          cy.wrap({ row: i, col: k }).then((position) => {
             cy.get('body', suppressLogs).then(($body) => {
-              cy.wrap($body.find(elements[position.col].locator, suppressLogs)[position.row]).then(exists => {
-                debugger
+              cy.wrap(
+                $body.find(elements[position.col].locator, suppressLogs)[
+                  position.row
+                ]
+              ).then((exists) => {
+                debugger;
                 if (exists) {
                   cy.get(elements[position.col].locator, suppressLogs)
                     .eq(position.row, suppressLogs)
                     .then((e) => {
                       o[elements[position.col].label] = e[0].textContent;
-                      matrix[position.row, position.col] = e[0].textContent;
+                      matrix[(position.row, position.col)] = e[0].textContent;
                     });
                 } else {
                   o[elements[k].label] = '';
-                  matrix[position.row, position.col] = ''
+                  matrix[(position.row, position.col)] = '';
                 }
-              })
+              });
             });
-          })
+          });
         }
         dataTable.addItem(o);
       }
-      cy.wrap(matrix).then(m => {
-        cy.log('matrix', m)
-      })
+      cy.wrap(matrix).then((m) => {
+        cy.log('matrix', m);
+      });
       return cy.wrap(dataTable);
     });
 });
