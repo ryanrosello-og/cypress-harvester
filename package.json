@@ -1,6 +1,6 @@
 {
   "name": "cypress-harvester",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Extracts repeating elements from the DOM onto a more friendly json format",
   "main": "cypress/support/commands.js",
   "scripts": {
