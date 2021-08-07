@@ -1,41 +1,42 @@
-context('gh bug', () => {
+context('repeating elements', () => {
   beforeEach(() => {
-    cy.visit('https://www.seabreeze.com.au/Classifieds/Search/Stand-Up-Paddle/Surfing-and-Cruising-Boards?search=uQNVTXNc1pWhjfFr%2B0%2FS5w%3D%3D&page=9');
+    cy.visit('https://docs.cypress.io/plugins/directory');
   });
 
-  it('scrape', ()=>{
-    cy.contains('a', 'Sell Your Gear').should('be.visible');
-    const parentLocator = 'tr[class*=clsList][id]'
-    const elems = [{label:'description', locator:'.clsListText'}, {label:'price', locator:'.clsListPrice'} ]
-
-    let res =[]
-    cy.get('tr[class*=clsList][id]').each(($el, index, $list) => {
-      cy.get("body").then($body => {
-        let obj = {}
-        cy.wrap(elems).each(($e, i, $elms) =>{
-          let loc = `${parentLocator}:nth-child(${index}) ${elems[i].locator}`
-          if ($body.find(loc).length > 0) {   
-            cy.get(loc).invoke('text').then(txt =>{
-              obj[elems[i].label] = txt
-            })
-            cy.log('>>>> true')
+  it('scrape', () => {
+    cy.contains('h1', 'Plugins').should('be.visible');
+    const suppressLog = { log: false }
+    const parentLocator = 'li.m-3';
+    const elems = [
+      { label: 'name', locator: 'h3' },
+      { label: 'description', locator: 'p' },
+      { label: 'keywords', locator: '.break-words' },
+      { label: 'badge', locator: '[class*=pluginBadge]' },
+    ];
+    
+    let res = [];
+    cy.get(parentLocator, suppressLog).each(($el, index, $list) => {
+      cy.wrap($el, suppressLog).then(($body) => {
+        let obj = {};
+        cy.wrap(elems, suppressLog).each(($e, i, $elms) => {
+          let loc = elems[i].locator;
+          if ($body.find(loc).length > 0) {
+            cy.get($el, suppressLog).within(() => {
+              cy.get(loc, suppressLog)
+                .invoke('text')
+                .then((txt) => {
+                  obj[elems[i].label] = txt;
+                });
+              
+            });
           } else {
-            cy.log('false')
+            obj[elems[i].label] = '';
           }
-        })
+        });
 
-        res.push(obj)
+        res.push(obj);
       });
-    }) 
-    cy.log(res)
-  })
-
-  xit('table assertions', () => {
-    cy.get('#dataTable')
-      .should('have.length', 2)
-      .scrapeTable()
-      .then((table) => {
-        expect(table.isPropertySorted(['task'], ['asc'])).to.be.true;
-      });
+    });
+    cy.log(res);
   });
 });
