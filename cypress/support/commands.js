@@ -51,6 +51,7 @@ Cypress.Commands.add(
     baseConfig.config.removeAllNewlineCharacters = true;
     const conf = { ...baseConfig, ...options.config };
     let dataTable = new DataTable();
+    dataTable.info = '';
     const elementsToScrape = options.elementsToScrape;
 
     cy.wrap(subject, suppressLog).each(($el, index, $list) => {
@@ -77,6 +78,25 @@ Cypress.Commands.add(
       });
     });
 
+    Cypress.log({
+      name: 'scrapeElements',
+      message: subject,
+      $el: subject,
+      consoleProps: () => {
+        return {
+          subject,
+          conf,
+          dataTable,
+        };
+      },
+    });
+
+    // save to file?
+    if (conf.exportFilePath && conf.exportFileName) {
+      dataTable.flagAsExported(
+        `${dataTable.info}\n ${exportTable(conf, dataTable)}`
+      );
+    }
     dataTable.propertyNames = elementsToScrape.map((e) => e.label);
     dataTable.columnLabels = dataTable.propertyNames;
 

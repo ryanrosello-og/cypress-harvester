@@ -1,9 +1,11 @@
 /// <reference types="cypress" />
 
 context('support for multiple elements', () => {
-  it('handles multiple locators', () => {
+  beforeEach(() => {
     cy.visit('./cypress/fixtures/multiple_elements.html');
-
+  });
+  
+  it('handles multiple locators', () => {
     cy.get('#all-elements-present .category')
       .scrapeElements({
         elementsToScrape: [
@@ -30,8 +32,6 @@ context('support for multiple elements', () => {
   });
 
   it('handles missing elements', () => {
-    cy.visit('./cypress/fixtures/multiple_elements.html');
-
     cy.get('#missing-element .category')
       .scrapeElements({
         elementsToScrape: [
@@ -54,6 +54,39 @@ context('support for multiple elements', () => {
             location: 'https://pen.com',
           },
         ]);
+      });
+  });
+
+  it('writes the content of the dataTable to file', () => {
+    cy.get('#all-elements-present .category')
+      .scrapeElements({
+        elementsToScrape: [
+          { label: 'title', locator: '.title' },
+          { label: 'location', locator: '.link' },
+        ],
+        config: {
+          exportFileName: 'repeatingElemsScrapedData.json',
+          exportFilePath: 'cypress/downloads',
+        },
+      })
+      .then((table) => {
+        expect(table.exportStatus).to.contain('Data table successfully saved');
+      });
+  });
+
+  it('determines if a property is sorted desc when dataset property is sorted desc', () => {
+    cy.get('#all-elements-present .category')
+      .scrapeElements({
+        elementsToScrape: [
+          { label: 'title', locator: '.title' },
+          { label: 'location', locator: '.link' },
+        ],
+      })
+      .then((table) => {
+        expect(
+          table.isPropertySorted(['title'], ['desc']),
+          'title sorted in desc order'
+        ).to.be.false;
       });
   });
 });
