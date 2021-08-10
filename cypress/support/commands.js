@@ -49,7 +49,8 @@ Cypress.Commands.add(
     const suppressLog = { log: false };
     let baseConfig = { config: defaultConfig() };
     baseConfig.config.removeAllNewlineCharacters = true;
-    const conf = { ...baseConfig, ...options.config };
+
+    const conf = { ...baseConfig.config, ...options.config };
     let dataTable = new DataTable();
     dataTable.info = '';
     const elementsToScrape = options.elementsToScrape;
@@ -63,11 +64,13 @@ Cypress.Commands.add(
             cy.get($el, suppressLog).within(suppressLog, () => {
               cy.get(childElementLocator, suppressLog)
                 .invoke(suppressLog, 'text')
-                .then((txt) => {
-                  scrappedObject[elementsToScrape[i].label] = conf.config
-                    .removeAllNewlineCharacters
-                    ? removeAllNewlineChars(txt)
-                    : txt;
+                .then((rawText) => {
+                  let cellValue = conf.removeAllNewlineCharacters
+                    ? removeAllNewlineChars(rawText)
+                    : rawText;
+
+                  scrappedObject[elementsToScrape[i].label] =
+                    applyDataConversion(conf.decimalColumns, i, cellValue);
                 });
             });
           } else {
