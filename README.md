@@ -3,6 +3,8 @@
 ![Biulds](https://github.com/ryanrosello-og/cypress-harvester/actions/workflows/main.yml/badge.svg)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ryanrosello-og/cypress-harvester/blob/master/LICENSE)
 
+[cypress-harvester on npmjs](https://www.npmjs.com/package/cypress-harvester)
+
 A life enhancing plug-in for Cypress allowing you to easliy work with html `<table>`elements and repeating elements, whether it be for test assertions or for web scarping purposes. 
 
 ## Installing
