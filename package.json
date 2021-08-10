@@ -17,6 +17,7 @@
     "web",
     "scrape"
   ],
+  "types": "./types/index.d.ts",
   "author": "Ryan Rosello",
   "license": "ISC",
   "bugs": {

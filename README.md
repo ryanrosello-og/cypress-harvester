@@ -284,6 +284,31 @@ cy.get('#example')
 | applyDataTypeConversion    | false         | boolean | Converts the column values to integers for the columns specified in the [decimalColumns] property.     |
 | decimalColumns             | []            | array   | This configuration is applied only when the applyDataTypeConversion flag is set to true.  Expects an array of intergers, these numbers map to the column index (starting at zero) of each of columns in the table.  The values contained in the columns will be converted to integers.    |
 
+## Best Practice
+
+This plugin doesn't wait for data to appear in your table.  This can be achieved by adding guards into your code prior to calling `scrapeTable`.  
+
+*Examples:*
+
+Use your application's api to sync against
+
+```javascript
+    cy.intercept('api/endpoint/fetches/data').as('myTableData')
+    cy.visit('https://myapp.com')
+    cy.wait('@myTableData')
+    cy.get('#simpleTable')
+      .scrapeTable()
+      .then((table) => {})
+```
+
+Add a `have.length.above` assertion after your `cy.get` call
+
+```javascript
+    cy.get('#simpleTable')
+      .should('have.length.above', 0)
+      .scrapeTable()
+      .then((table) => {})
+```
     
 ## Contributions
 

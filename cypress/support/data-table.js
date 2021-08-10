@@ -58,6 +58,12 @@ export default class DataTable {
       );
     }
 
+    if (this.data.length === 0) {
+      return new Error(
+        'The table does not contain any data, please ensure that you have added sufficient guards to check whether rows of data has been loaded onto the table'
+      );
+    }
+
     var expectedTableSort = Cypress._.orderBy(
       this.data,
       properties,
