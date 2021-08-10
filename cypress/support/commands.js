@@ -41,6 +41,73 @@ const defaultConfig = () => {
 };
 
 Cypress.Commands.add(
+  'scrapeElements',
+  {
+    prevSubject: true,
+  },
+  (subject, options) => {
+    const suppressLog = { log: false };
+    let baseConfig = { config: defaultConfig() };
+    baseConfig.config.removeAllNewlineCharacters = true;
+
+    const conf = { ...baseConfig.config, ...options.config };
+    let dataTable = new DataTable();
+    dataTable.info = '';
+    const elementsToScrape = options.elementsToScrape;
+
+    cy.wrap(subject, suppressLog).each(($el, index, $list) => {
+      cy.wrap($el, suppressLog).then(($body) => {
+        let scrappedObject = {};
+        cy.wrap(elementsToScrape, suppressLog).each(($e, i, $elms) => {
+          let childElementLocator = elementsToScrape[i].locator;
+          if ($body.find(childElementLocator).length > 0) {
+            cy.get($el, suppressLog).within(suppressLog, () => {
+              cy.get(childElementLocator, suppressLog)
+                .invoke(suppressLog, 'text')
+                .then((rawText) => {
+                  let cellValue = conf.removeAllNewlineCharacters
+                    ? removeAllNewlineChars(rawText)
+                    : rawText;
+
+                  scrappedObject[elementsToScrape[i].label] =
+                    applyDataConversion(conf.decimalColumns, i, cellValue);
+                });
+            });
+          } else {
+            scrappedObject[elementsToScrape[i].label] = '';
+          }
+        });
+        dataTable.addItem(scrappedObject);
+      });
+    });
+
+    Cypress.log({
+      name: 'scrapeElements',
+      message: subject,
+      $el: subject,
+      consoleProps: () => {
+        return {
+          subject,
+          conf,
+          dataTable,
+        };
+      },
+    });
+
+    // save to file?
+    if (conf.exportFilePath && conf.exportFileName) {
+      dataTable.flagAsExported(
+        `${dataTable.info}\n ${exportTable(conf, dataTable)}`
+      );
+    }
+    dataTable.propertyNames = elementsToScrape.map((e) => e.label);
+    dataTable.columnLabels = dataTable.propertyNames;
+
+    return cy.wrap(dataTable);
+  }
+);
+
+Cypress.Commands.add(
   'scrapeTable',
   {
     prevSubject: true,

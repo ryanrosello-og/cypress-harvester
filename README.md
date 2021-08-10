@@ -3,7 +3,9 @@
 ![Biulds](https://github.com/ryanrosello-og/cypress-harvester/actions/workflows/main.yml/badge.svg)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ryanrosello-og/cypress-harvester/blob/master/LICENSE)
 
-A life enhancing plug-in for Cypress allowing you to easliy work with html `<table>`elements, whether it be for test assertions or for web scarping purposes. 
+[cypress-harvester on npmjs](https://www.npmjs.com/package/cypress-harvester)
+
+A life enhancing plug-in for Cypress allowing you to easliy work with html `<table>`elements and repeating elements, whether it be for test assertions or for web scarping purposes. 
 
 ## Installing
 
@@ -59,7 +61,6 @@ Given a simple html table below:
 </table>
 ```
 
-
 When table is passed through the Cypress harvester, Cypress is able to easily extract data and convert to a json representation of the table:
 
 ```javascript
@@ -88,6 +89,62 @@ cy.get('#example')
     ]);
   });
 ```
+## Example - Testing repeating elements
+
+Given a simple set of repeating elements below:
+
+```html
+<div id="sale-items" style="margin-left:45px;">
+  <div class="product">
+    <div class="product-name">iPad Pro</div>
+    <div class="model">11-inch Liquid Retina Display</div>
+    <div class="price">$829.99</div>
+  </div>
+  <div class="product">
+    <div class="product-name">iPad Air</div>
+    <div class="model">64 GB  Wi-Fi + Cellular</div>
+    <div class="price">$599.99</div>
+  </div>
+  <div class="product">
+    <div class="product-name">iPad mini</div>
+    <div class="model">256 GB  Wi-Fi + Cellular</div>
+    <div class="price">$399</div>
+  </div>
+</div>
+```
+
+When the set of repeating elements is passed through to the `scrapeElements` scraper.  It will yeild a nice json represenation of the data on the page.  This will allow you to assert the data or save the results.
+
+```javascript
+cy.get('#sale-items .product')
+  .scrapeElements({
+    elementsToScrape: [
+      { label: 'product_name', locator: '.product-name' },
+      { label: 'product_model', locator: '.model' },
+      { label: 'item_price', locator: '.price' },
+    ],
+  })
+  .then((scrapedData) => {
+    expect(scrapedData.data).to.deep.eq([
+      {
+        product_name: 'iPad Pro',
+        product_model: '11-inch Liquid Retina Display',
+        item_price: '$829.99',
+      },
+      {
+        product_name: 'iPad Air',
+        product_model: '64 GB  Wi-Fi + Cellular',
+        item_price: '$599.99',
+      },
+      {
+        product_name: 'iPad mini',
+        product_model: '256 GB  Wi-Fi + Cellular',
+        item_price: '$399',
+      },
+    ]);
+  });
+```
+
 
 ## Example - Web scraping records
 
