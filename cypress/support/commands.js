@@ -25,6 +25,8 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 var path = require('path');
 var dayjs = require('dayjs');
+var customParseFormat = require('dayjs/plugin/customParseFormat')
+dayjs.extend(customParseFormat)
 import DataTable from '../support/data-table';
 import { getTableMatrix } from '../support/table-slots';
 
@@ -76,6 +78,7 @@ Cypress.Commands.add(
                     applyDataConversion({
                       decimalCols: conf.decimalColumns,
                       dateColumns: conf.dateColumns,
+                      dateFormal: conf.dateFormat,
                       columnIndex: i,
                       rawCellValue: cellValue,
                     });
@@ -149,6 +152,7 @@ Cypress.Commands.add(
         o[propertyNames[index]] = applyDataConversion({
           decimalCols: conf.decimalColumns,
           dateColumns: conf.dateColumns,
+          dateFormat: conf.dateFormat,
           columnIndex: index,
           rawCellValue: cellValue,
         });
@@ -228,7 +232,8 @@ const applyDataConversion = (options) => {
   if (options.decimalCols.includes(options.columnIndex)) {
     return Number(options.rawCellValue.replace(/[^0-9\.-]+/g, ''));
   } else if (options.dateColumns.includes(options.columnIndex)) {
-    return Date(options.rawCellValue);
+    debugger
+    return dayjs(options.rawCellValue, options.dateFormat);
   } else {
     return options.rawCellValue;
   }
