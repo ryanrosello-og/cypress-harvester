@@ -24,7 +24,6 @@
     "url": "https://github.com/ryanrosello-og/cypress-harvester/issues"
   },
   "homepage": "https://github.com/ryanrosello-og/cypress-harvester#readme",
-  "dependencies": {},
   "prettier": {
     "singleQuote": true,
     "tabWidth": 2,
@@ -32,6 +31,7 @@
   },
   "devDependencies": {
     "cypress": "^7.4.0",
+    "dayjs": "^1.10.7",
     "prettier": "^2.3.0"
   }
 }
