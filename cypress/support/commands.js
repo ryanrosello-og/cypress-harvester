@@ -23,6 +23,7 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+var path = require('path');
 var parse = require('date-fns/parse');
 var getTime = require('date-fns/get_time');
 import DataTable from '../support/data-table';
