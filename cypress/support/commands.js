@@ -23,10 +23,8 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-var path = require('path');
-var dayjs = require('dayjs');
-var customParseFormat = require('dayjs/plugin/customParseFormat')
-dayjs.extend(customParseFormat)
+var parse = require('date-fns/parse');
+var getTime = require('date-fns/get_time');
 import DataTable from '../support/data-table';
 import { getTableMatrix } from '../support/table-slots';
 
@@ -228,12 +226,12 @@ const isTableElement = (subject) => {
 const applyDataConversion = (options) => {
   if (options.decimalCols.length === 0 && options.dateColumns.length === 0)
     return options.rawCellValue;
-
   if (options.decimalCols.includes(options.columnIndex)) {
     return Number(options.rawCellValue.replace(/[^0-9\.-]+/g, ''));
   } else if (options.dateColumns.includes(options.columnIndex)) {
-    debugger
-    return dayjs(options.rawCellValue, options.dateFormat);
+    const dte = parse(options.rawCellValue)
+    const unixTime = Math.floor(getTime(dte) / 1000)
+    return isNaN(unixTime) ? 'Unabled to parse date' : unixTime
   } else {
     return options.rawCellValue;
   }
