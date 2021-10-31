@@ -24,6 +24,8 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 var path = require('path');
+var parse = require('date-fns/parse');
+var getUnixTime = require('date-fns/get_time');
 import DataTable from '../support/data-table';
 import { getTableMatrix } from '../support/table-slots';
 
@@ -37,6 +39,8 @@ const defaultConfig = () => {
     applyDataTypeConversion: false,
     removeAllNewlineCharacters: false,
     decimalColumns: [],
+    dateColumns: [],
+    dateFormat: 'DD-MM-YYYY HH:MM:SS',
   };
 };
 
@@ -70,7 +74,13 @@ Cypress.Commands.add(
                     : rawText;
 
                   scrappedObject[elementsToScrape[i].label] =
-                    applyDataConversion(conf.decimalColumns, i, cellValue);
+                    applyDataConversion({
+                      decimalCols: conf.decimalColumns,
+                      dateColumns: conf.dateColumns,
+                      dateFormal: conf.dateFormat,
+                      columnIndex: i,
+                      rawCellValue: cellValue,
+                    });
                 });
             });
           } else {
@@ -138,11 +148,13 @@ Cypress.Commands.add(
         let cellValue = conf.removeAllNewlineCharacters
           ? removeAllNewlineChars(cell.textContent)
           : cell.textContent;
-        o[propertyNames[index]] = applyDataConversion(
-          conf.decimalColumns,
-          index,
-          cellValue
-        );
+        o[propertyNames[index]] = applyDataConversion({
+          decimalCols: conf.decimalColumns,
+          dateColumns: conf.dateColumns,
+          dateFormat: conf.dateFormat,
+          columnIndex: index,
+          rawCellValue: cellValue,
+        });
       });
       dataTable.addItem(o);
     }
@@ -212,13 +224,17 @@ const isTableElement = (subject) => {
   return subject.tagName.toLowerCase() === 'table';
 };
 
-const applyDataConversion = (columnsToConvert, columnIndex, rawCellValue) => {
-  if (columnsToConvert.length === 0) return rawCellValue;
-
-  if (columnsToConvert.includes(columnIndex)) {
-    return Number(rawCellValue.replace(/[^0-9\.-]+/g, ''));
+const applyDataConversion = (options) => {
+  if (options.decimalCols.length === 0 && options.dateColumns.length === 0)
+    return options.rawCellValue;
+  if (options.decimalCols.includes(options.columnIndex)) {
+    return Number(options.rawCellValue.replace(/[^0-9\.-]+/g, ''));
+  } else if (options.dateColumns.includes(options.columnIndex)) {
+    const dte = parse(options.rawCellValue)
+    const unixTime = getUnixTime(dte/1000)
+    return isNaN(unixTime) ? 'Unabled to parse date' : unixTime
   } else {
-    return rawCellValue;
+    return options.rawCellValue;
   }
 };
 

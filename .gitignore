@@ -109,3 +109,4 @@ videos/
 # cypress extract json files
 scrapedData.json
 *scrapedData.json
+cypress/screenshots
