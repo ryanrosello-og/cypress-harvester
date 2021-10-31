@@ -25,7 +25,7 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 var path = require('path');
 var parse = require('date-fns/parse');
-var getTime = require('date-fns/get_time');
+var getUnixTime = require('date-fns/get_time');
 import DataTable from '../support/data-table';
 import { getTableMatrix } from '../support/table-slots';
 
@@ -231,7 +231,7 @@ const applyDataConversion = (options) => {
     return Number(options.rawCellValue.replace(/[^0-9\.-]+/g, ''));
   } else if (options.dateColumns.includes(options.columnIndex)) {
     const dte = parse(options.rawCellValue)
-    const unixTime = Math.floor(getTime(dte) / 1000)
+    const unixTime = getUnixTime(dte/1000)
     return isNaN(unixTime) ? 'Unabled to parse date' : unixTime
   } else {
     return options.rawCellValue;
