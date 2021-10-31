@@ -247,6 +247,23 @@ cy.get('#example')
   });
 ```
 
+## Date assertions
+
+In order to assert date columns, you will need to specify the column index for the data to be interpreted as a date data type.  The underlying data will be converted to unix epoch format to allow sort assertions.
+
+```javascript
+cy.get('#example')
+  .scrapeTable({ dateColumns: [0] })
+  .then((table) => {
+    // assert the number of records in the table
+    expect(
+      table.isPropertySorted(['Created'], ['asc']),
+      'created sorted in asc order'
+    ).to.be.false;
+  });
+
+```
+
 ## Use fixture as baseline
 
 Take advantage to the fixtures within Cypress when dealing with large datasets.
