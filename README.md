@@ -255,9 +255,9 @@ In order to assert date columns, you will need to specify the column index for t
 cy.get('#example')
   .scrapeTable({ dateColumns: [0] })
   .then((table) => {
-    // assert the number of records in the table
+    // ensure the 'created' AKA 'Created' date field is sorted by ascending
     expect(
-      table.isPropertySorted(['Created'], ['asc']),
+      table.isPropertySorted(['created'], ['asc']),
       'created sorted in asc order'
     ).to.be.false;
   });
