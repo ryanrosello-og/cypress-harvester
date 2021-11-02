@@ -24,8 +24,6 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 var path = require('path');
-var parse = require('date-fns/parse');
-var getUnixTime = require('date-fns/get_time');
 import DataTable from '../support/data-table';
 import { getTableMatrix } from '../support/table-slots';
 
@@ -230,9 +228,8 @@ const applyDataConversion = (options) => {
   if (options.decimalCols.includes(options.columnIndex)) {
     return Number(options.rawCellValue.replace(/[^0-9\.-]+/g, ''));
   } else if (options.dateColumns.includes(options.columnIndex)) {
-    const dte = parse(options.rawCellValue)
-    const unixTime = getUnixTime(dte/1000)
-    return isNaN(unixTime) ? 'Unabled to parse date' : unixTime
+    const dte = Date.parse(options.rawCellValue)
+    return isNaN(dte) ? 'Unabled to parse date' : dte
   } else {
     return options.rawCellValue;
   }
