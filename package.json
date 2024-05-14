@@ -30,7 +30,7 @@
     "semi": true
   },
   "devDependencies": {
-    "cypress": "^7.4.0",
-    "prettier": "^2.3.0"
+    "cypress": "^13.9.0",
+    "prettier": "^3.2.5"
   }
 }
